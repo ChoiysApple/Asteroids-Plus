@@ -13,19 +13,10 @@ class GameScene: SKScene {
         
         backgroundColor = .black
         
-        let path = CGMutablePath()
-        path.move(to: .zero)
-        path.addLine(to: CGPoint(x: 200, y: 50))
-        path.addLine(to: CGPoint(x: 150, y: 150))
-        path.addLine(to: CGPoint(x: 200, y: 50))
-        path.addLine(to: .zero)
+        let ship = ShipNode(scale: 4.0, position: CGPoint(x: self.frame.midX, y: self.frame.midY))
         
-        let shape = SKShapeNode(path: path)
-        shape.strokeColor = .white
-        shape.lineWidth = 1
-        shape.position = CGPoint(x: self.frame.midX, y: self.frame.midY)
-        self.addChild(shape)
-        
+        self.addChild(ship)
+        ship.run(SKAction.rotate(byAngle: 3, duration: 5.0))
         
     }
     
