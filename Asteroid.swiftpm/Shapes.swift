@@ -35,6 +35,7 @@ class ShipNode: SKShapeNode {
         self.strokeColor = .white
         self.lineWidth = kLineWidth
         self.position = position
+        self.fillColor = .black
         self.name = kShipName
     }
     
@@ -76,4 +77,3 @@ class AsteroidNode: SKShapeNode {
     }
 
 }
-
