@@ -14,11 +14,9 @@ class GameScene: SKScene {
         backgroundColor = .black
         
         let ship = ShipNode(scale: 0.0, position: CGPoint(x: self.frame.midX, y: self.frame.midY))
-        ship.name = "ship"
         self.addChild(ship)
         
-        let asteroid = AsteroidNode(scale: AsteroidSize.Big.rawValue, position: CGPoint(x: self.frame.midX, y: self.frame.midY))
-        asteroid.name = "asteroid"
+        let asteroid = AsteroidNode(scale: AsteroidSize.Big, position: CGPoint(x: self.frame.midX, y: self.frame.midY))
         self.addChild(asteroid)
         
     }
