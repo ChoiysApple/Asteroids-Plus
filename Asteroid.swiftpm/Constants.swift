@@ -8,3 +8,4 @@
 import SpriteKit
 
 let kLineWidth: CGFloat = 3.0
+let kShipScale: CGFloat = 4.0
