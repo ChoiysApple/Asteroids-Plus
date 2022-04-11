@@ -7,7 +7,7 @@
 
 import SpriteKit
 
-enum AsteroidType: Int {
+enum AsteroidType: Int, CaseIterable {
     case A, B, C
     
     var points: [CGPoint] {
