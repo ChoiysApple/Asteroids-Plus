@@ -58,8 +58,16 @@ enum AsteroidType: Int, CaseIterable {
     
 }
 
-enum AsteroidSize: CGFloat {
-    case Big = 15.0
-    case Middle = 10.0
-    case Small = 5.0
+enum AsteroidSize: Int {
+    case Big = 2
+    case Middle = 1
+    case Small = 0
+    
+    var scale: CGFloat {
+        switch self {
+        case .Big: return 15.0
+        case .Middle: return 10.0
+        case .Small: return 5.0
+        }
+    }
 }

@@ -56,14 +56,14 @@ class ShipNode: SKShapeNode {
 class AsteroidNode: SKShapeNode {
     
     var type = AsteroidType.A
-    var size = AsteroidSize.Big
+    var size = AsteroidSize.Big.scale
     
-    init(scale: AsteroidSize, position: CGPoint){
+    init(scaleType: AsteroidSize, position: CGPoint){
         super.init()
         
         let random = Int.random(in: 0...AsteroidType.allCases.count-1)
         let points = AsteroidType(rawValue: random)?.points ?? AsteroidType.A.points
-        let size = CGPoint(x: scale.rawValue, y: scale.rawValue)
+        let size = CGPoint(x: scaleType.scale, y: scaleType.scale)
         
         let scaledPoints = points.map { $0 * size }
         

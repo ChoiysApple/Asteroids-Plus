@@ -29,8 +29,10 @@ class GameScene: SKScene {
         let ship = ShipNode(scale: kShipScale, position: CGPoint(x: self.frame.midX, y: self.frame.midY))
         self.addChild(ship)
         
-        let target = AsteroidNode(scale: .Big, position: CGPoint(x: self.frame.midX*1.5, y: self.frame.midY*1.5))
+        let target = AsteroidNode(scaleType: .Big, position: CGPoint(x: self.frame.midX*1.5, y: self.frame.midY*1.5))
         self.addChild(target)
+        
+        target.run(SKAction.move(to: ship.position, duration: 10.0))
     }
 }
 
@@ -85,7 +87,7 @@ extension GameScene {
     }
 }
 
-//MARK: Physics
+//MARK: Collision
 extension GameScene: SKPhysicsContactDelegate {
     
     func didBegin(_ contact: SKPhysicsContact) {
@@ -118,5 +120,9 @@ extension GameScene: SKPhysicsContactDelegate {
             if let index = contactQueue.firstIndex(of: contact) { contactQueue.remove(at: index) }
       }
     }
+}
 
+//MARK: Collision Event
+extension GameScene {
+    
 }
