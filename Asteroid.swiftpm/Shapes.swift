@@ -10,18 +10,26 @@ import SpriteKit
 
 class ShipNode: SKShapeNode {
     
-    var pointVector = CGVector(dx: -1, dy: -1)
-    
     init(scale: CGFloat, position: CGPoint){
         super.init()
         
+        let points = [
+            CGPoint(x: 0, y: 10),
+            CGPoint(x: 5, y: -5),
+            CGPoint(x: 0, y: -2),
+            CGPoint(x: -5, y: -5),
+        ]
+        
         let size = CGPoint(x: scale, y: scale)
+        let scaledPoints = points.map { $0 * size }
+        
         let path = CGMutablePath()
-        path.move(to: CGPoint(x: -10, y: -10) * size)
-        path.addLine(to: CGPoint(x: 10, y: 0) * size)
-        path.addLine(to: CGPoint(x: 2, y: 2) * size)
-        path.addLine(to: CGPoint(x: 0, y: 10) * size)
-        path.addLine(to: CGPoint(x: -10, y: -10) * size)
+        path.move(to: scaledPoints[0])
+        for i in 1...scaledPoints.count-1 {
+            path.addLine(to: scaledPoints[i])
+        }
+        path.addLine(to: scaledPoints[0])
+
 
         self.path = path
         self.strokeColor = .white
@@ -60,7 +68,7 @@ class AsteroidNode: SKShapeNode {
         self.strokeColor = .white
         self.lineWidth = kLineWidth
         self.position = position
-        
+        self.name = kAsteroidName
     }
     
     required init?(coder aDecoder: NSCoder) {

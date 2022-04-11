@@ -9,5 +9,6 @@ import SpriteKit
 
 let kLineWidth: CGFloat = 3.0
 
-let kShipScale: CGFloat = 4.0
+let kShipScale: CGFloat = 3.5
 let kShipName: String = "ship"
+let kAsteroidName: String = "asteroid"

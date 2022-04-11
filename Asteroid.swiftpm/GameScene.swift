@@ -8,28 +8,23 @@
 import SpriteKit
 
 class GameScene: SKScene {
-    
+        
     override func didMove(to view: SKView) {
         
         backgroundColor = .black
         
-        let ship = ShipNode(scale: 0.0, position: CGPoint(x: self.frame.midX, y: self.frame.midY))
+        let ship = ShipNode(scale: kShipScale, position: CGPoint(x: self.frame.midX, y: self.frame.midY))
         self.addChild(ship)
-        
-        let asteroid = AsteroidNode(scale: AsteroidSize.Big, position: CGPoint(x: self.frame.midX, y: self.frame.midY))
-        self.addChild(asteroid)
-        
+                
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         
-        let ship = childNode(withName: "ship")!
-        let asteroid = childNode(withName: "asteroid")!
-        
-        ship.run(SKAction.rotate(byAngle: 3, duration: 5.0))
-        asteroid.run(SKAction.rotate(byAngle: 3, duration: 5.0))
-        
+        let ship = childNode(withName: kShipName)
+        guard let touchLocation = touches.first?.location(in: self) else { return }
+
+        let lookAtConstraint = SKConstraint.orient(to: touchLocation, offset: SKRange(constantValue: -CGFloat.pi / 2))
+        ship?.constraints = [ lookAtConstraint ]
     }
-    
     
 }
