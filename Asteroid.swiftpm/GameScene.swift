@@ -70,9 +70,10 @@ extension GameScene {
     }
     
     private func fireBullet(touchLocation: CGPoint) {
-        let ship = childNode(withName: kShipName)
+    
+        let departure = childNode(withName: kShipName)?.position ?? CGPoint(x: self.frame.midX, y: self.frame.midY)
 
-        let bullet = getBulletNode(position: CGPoint(x: self.frame.midX, y: self.frame.midY))
+        let bullet = getBulletNode(position: departure)
         self.addChild(bullet)
         
         let destination = (touchLocation - bullet.position).normalized() * CGPoint(x: 1000, y: 1000) + bullet.position
@@ -97,9 +98,17 @@ extension GameScene: SKPhysicsContactDelegate {
         let nodeNames = [contact.bodyA.node!.name!, contact.bodyB.node!.name!]
         
         if nodeNames.contains(kAsteroidName) && nodeNames.contains(kBulletName) {
-            print("Asteroid & Bullet")
+            
+            contact.bodyA.node?.removeFromParent()
+            contact.bodyB.node?.removeFromParent()
+            
         } else if nodeNames.contains(kShipName) && nodeNames.contains(kAsteroidName) {
-            print("Asteroid & Ship")
+            
+            if contact.bodyA.node == childNode(withName: kShipName) {
+                contact.bodyB.node!.removeFromParent()
+            } else {
+                contact.bodyA.node!.removeFromParent()
+            }
         }
     }
     
