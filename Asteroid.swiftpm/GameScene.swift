@@ -8,14 +8,29 @@
 import SpriteKit
 
 class GameScene: SKScene {
+    
+    var contactQueue = [SKPhysicsContact]()
         
     override func didMove(to view: SKView) {
-        
+
         backgroundColor = .black
+
+        physicsWorld.contactDelegate = self
+        
+        configureNodes()
+    }
+    
+    override func update(_ currentTime: TimeInterval) {
+        processContacts(forUpdate: currentTime)
+    }
+    
+    private func configureNodes() {
         
         let ship = ShipNode(scale: kShipScale, position: CGPoint(x: self.frame.midX, y: self.frame.midY))
         self.addChild(ship)
-                
+        
+        let target = AsteroidNode(scale: .Big, position: CGPoint(x: self.frame.midX*1.5, y: self.frame.midY*1.5))
+        self.addChild(target)
     }
 }
 
@@ -57,11 +72,7 @@ extension GameScene {
     private func fireBullet(touchLocation: CGPoint) {
         let ship = childNode(withName: kShipName)
 
-        let bullet = SKShapeNode(circleOfRadius: kBulletRadius)
-        bullet.position = ship?.position ?? CGPoint(x: self.frame.midX, y: self.frame.midY)
-        bullet.fillColor = .white
-        bullet.zPosition = -10
-        bullet.name = kBulletName
+        let bullet = getBulletNode(position: CGPoint(x: self.frame.midX, y: self.frame.midY))
         self.addChild(bullet)
         
         let destination = (touchLocation - bullet.position).normalized() * CGPoint(x: 1000, y: 1000) + bullet.position
@@ -71,4 +82,32 @@ extension GameScene {
             SKAction.removeFromParent()
         ]))
     }
+}
+
+//MARK: Physics
+extension GameScene: SKPhysicsContactDelegate {
+    
+    func didBegin(_ contact: SKPhysicsContact) {
+        contactQueue.append(contact)
+    }
+    
+    private func handle(_ contact: SKPhysicsContact) {
+        if contact.bodyA.node?.parent == nil || contact.bodyB.node?.parent == nil { return }
+      
+        let nodeNames = [contact.bodyA.node!.name!, contact.bodyB.node!.name!]
+        
+        if nodeNames.contains(kAsteroidName) && nodeNames.contains(kBulletName) {
+            print("Asteroid & Bullet")
+        } else if nodeNames.contains(kShipName) && nodeNames.contains(kAsteroidName) {
+            print("Asteroid & Ship")
+        }
+    }
+    
+    func processContacts(forUpdate currentTime: CFTimeInterval) {
+        for contact in contactQueue {
+            handle(contact)
+            if let index = contactQueue.firstIndex(of: contact) { contactQueue.remove(at: index) }
+      }
+    }
+
 }

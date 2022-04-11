@@ -7,6 +7,11 @@
 
 import SpriteKit
 
+// Physics Category
+let kShipCategory: UInt32 = 0x1 << 0
+let kAsteroidCategory: UInt32 = 0x1 << 1
+let kBulletCategory: UInt32 = 0x1 << 2
+
 // Common
 let kLineWidth: CGFloat = 3.0
 

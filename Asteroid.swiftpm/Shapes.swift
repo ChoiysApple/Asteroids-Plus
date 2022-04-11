@@ -37,6 +37,15 @@ class ShipNode: SKShapeNode {
         self.position = position
         self.fillColor = .black
         self.name = kShipName
+        
+        self.physicsBody = SKPhysicsBody(edgeLoopFrom: path)
+        self.physicsBody!.affectedByGravity = false
+        self.physicsBody?.mass = 1.0
+        
+        self.physicsBody!.categoryBitMask = kShipCategory
+        self.physicsBody!.contactTestBitMask = kAsteroidCategory
+        self.physicsBody!.collisionBitMask = kAsteroidCategory
+
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -70,10 +79,36 @@ class AsteroidNode: SKShapeNode {
         self.lineWidth = kLineWidth
         self.position = position
         self.name = kAsteroidName
+        
+        self.physicsBody = SKPhysicsBody(edgeLoopFrom: path)
+        self.physicsBody!.affectedByGravity = false
+        self.physicsBody?.mass = 2.0
+        
+        self.physicsBody!.categoryBitMask = kAsteroidCategory
+        self.physicsBody!.contactTestBitMask = 0x0
+        self.physicsBody!.collisionBitMask = kBulletCategory
+        
+        
     }
     
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 
+}
+
+public func getBulletNode(position: CGPoint) -> SKShapeNode {
+    let bullet = SKShapeNode(circleOfRadius: kBulletRadius)
+    bullet.position = position
+    bullet.fillColor = .white
+    bullet.zPosition = -10
+    bullet.name = kBulletName
+    
+    bullet.physicsBody = SKPhysicsBody(circleOfRadius: kBulletRadius)
+    bullet.physicsBody!.affectedByGravity = false
+    bullet.physicsBody!.categoryBitMask = kBulletCategory
+    bullet.physicsBody!.contactTestBitMask = kAsteroidCategory
+
+    
+    return bullet
 }
