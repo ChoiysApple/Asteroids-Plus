@@ -10,6 +10,10 @@ import SpriteKit
 class GameScene: SKScene {
     
     var contactQueue = [SKPhysicsContact]()
+    var timeOfLastFire: CFTimeInterval = 0.0
+    var timePerFire: CFTimeInterval = 1.0       // Fire Cooltime
+    var systemTime: CFTimeInterval = 1.0
+    var isLoaded: Bool = true
         
     override func didMove(to view: SKView) {
 
@@ -21,8 +25,13 @@ class GameScene: SKScene {
     }
     
     override func update(_ currentTime: TimeInterval) {
+        
+        self.systemTime = currentTime
+        
         processContacts(forUpdate: currentTime)
         processAsteroidOutScreen()
+        
+        controlFireRate(forUpdate: currentTime)
     }
     
     private func configureNodes() {
@@ -75,7 +84,7 @@ extension GameScene {
     
     private func fireBullet(touchLocation: CGPoint) {
         
-        if let _ = childNode(withName: kBulletName) { return }              // Check is there any existing bullet
+        guard isLoaded else { return }
         guard let ship = childNode(withName: kShipName) else { return }     // Check is there ship
     
         let departure = ship.position
@@ -88,6 +97,18 @@ extension GameScene {
             SKAction.move(to: destination, duration: 1.0),
             SKAction.removeFromParent()
         ]))
+        
+        isLoaded = false
+        timeOfLastFire = systemTime
+    }
+    
+    private func controlFireRate(forUpdate currentTime: CFTimeInterval) {
+        
+        if (currentTime - timeOfLastFire < timePerFire) {
+            isLoaded = false
+        } else {
+            isLoaded = true
+        }
     }
 }
 
