@@ -175,39 +175,30 @@ extension GameScene {
             guard let asteroid = node as? AsteroidNode else { return }
             
             let margin: CGFloat = 10.0
+            let originalPosition = asteroid.position
             
             // right
             if asteroid.position.x >= screenSize.width + asteroid.frame.width {
-                print("right")
-                asteroid.removeAllActions()
                 asteroid.position = CGPoint(x: -asteroid.frame.width + margin, y: asteroid.position.y)
-                asteroid.run(SKAction.move(to: asteroid.movingVector.normalized() * CGPoint(x: 2000, y: 2000) + asteroid.position, duration: kDefaultMoveDuration))
               
             // left
             } else if asteroid.position.x <= -asteroid.frame.width-margin {
-                print("left")
-                asteroid.removeAllActions()
                 asteroid.position = CGPoint(x: screenSize.width + asteroid.frame.width - margin, y: asteroid.position.y)
-                asteroid.run(SKAction.move(to: asteroid.movingVector.normalized() * CGPoint(x: 2000, y: 2000) + asteroid.position, duration: kDefaultMoveDuration))
             }
             
             // top
             if asteroid.position.y >= screenSize.height + asteroid.frame.height {
-                
-                print("top")
-                asteroid.removeAllActions()
                 asteroid.position = CGPoint(x: asteroid.position.x, y: -asteroid.frame.width + margin)
-                asteroid.run(SKAction.move(to: asteroid.movingVector.normalized() * CGPoint(x: 2000, y: 2000) + asteroid.position, duration: kDefaultMoveDuration))
                 
             // bottom
             } else if asteroid.position.y <= -asteroid.frame.height-margin {
-                
-                print("bottom")
-                asteroid.removeAllActions()
                 asteroid.position = CGPoint(x: asteroid.position.x, y: screenSize.height + asteroid.frame.height - margin)
-                asteroid.run(SKAction.move(to: asteroid.movingVector.normalized() * CGPoint(x: 2000, y: 2000) + asteroid.position, duration: kDefaultMoveDuration))
             }
 
+            if originalPosition != asteroid.position {
+                asteroid.removeAllActions()
+                asteroid.run(SKAction.move(to: asteroid.movingVector.normalized() * CGPoint(x: 2000, y: 2000) + asteroid.position, duration: kDefaultMoveDuration))
+            }
                 
                 
         }
