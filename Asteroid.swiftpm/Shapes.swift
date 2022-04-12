@@ -9,7 +9,7 @@ import Foundation
 import SpriteKit
 
 class ShipNode: SKShapeNode {
-    
+        
     init(scale: CGFloat, position: CGPoint){
         super.init()
         
@@ -17,7 +17,7 @@ class ShipNode: SKShapeNode {
             CGPoint(x: 0, y: 10),
             CGPoint(x: 5, y: -5),
             CGPoint(x: 0, y: -2),
-            CGPoint(x: -5, y: -5),
+            CGPoint(x: -5, y: -5),                                
         ]
         
         let size = CGPoint(x: scale, y: scale)
@@ -56,16 +56,18 @@ class ShipNode: SKShapeNode {
 class AsteroidNode: SKShapeNode {
     
     var type = AsteroidType.A
-    var size = AsteroidSize.Big.scale
+    var size = AsteroidSize.Big
+    var movingVector = CGPoint(x: 0, y: 0)
     
     init(scaleType: AsteroidSize, position: CGPoint){
         super.init()
         
         let random = Int.random(in: 0...AsteroidType.allCases.count-1)
         let points = AsteroidType(rawValue: random)?.points ?? AsteroidType.A.points
-        let size = CGPoint(x: scaleType.scale, y: scaleType.scale)
         
-        let scaledPoints = points.map { $0 * size }
+        size = scaleType
+        let scale = CGPoint(x: scaleType.scale, y: scaleType.scale)
+        let scaledPoints = points.map { $0 * scale }
         
         let path = CGMutablePath()
         path.move(to: scaledPoints[0])
@@ -76,6 +78,7 @@ class AsteroidNode: SKShapeNode {
 
         self.path = path
         self.strokeColor = .white
+        self.fillColor = .black
         self.lineWidth = kLineWidth
         self.position = position
         self.name = kAsteroidName
@@ -87,6 +90,7 @@ class AsteroidNode: SKShapeNode {
         self.physicsBody!.categoryBitMask = kAsteroidCategory
         self.physicsBody!.contactTestBitMask = 0x0
         self.physicsBody!.collisionBitMask = kBulletCategory
+        self.physicsBody!.usesPreciseCollisionDetection = true
         
         
     }
@@ -108,6 +112,7 @@ public func getBulletNode(position: CGPoint) -> SKShapeNode {
     bullet.physicsBody!.affectedByGravity = false
     bullet.physicsBody!.categoryBitMask = kBulletCategory
     bullet.physicsBody!.contactTestBitMask = kAsteroidCategory
+    bullet.physicsBody!.usesPreciseCollisionDetection = true
 
     
     return bullet

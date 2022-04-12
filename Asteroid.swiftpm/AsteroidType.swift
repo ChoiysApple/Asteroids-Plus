@@ -6,6 +6,7 @@
 //
 
 import SpriteKit
+import SwiftUI
 
 enum AsteroidType: Int, CaseIterable {
     case A, B, C
@@ -71,3 +72,10 @@ enum AsteroidSize: Int {
         }
     }
 }
+
+enum AsteroidSplitType: Int, CaseIterable {
+    case DiagonalDown = 0          // \
+    case Horizontal = 1            // -
+    case DiagonalUp = 2            // /
+}
+

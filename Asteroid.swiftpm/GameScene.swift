@@ -32,7 +32,9 @@ class GameScene: SKScene {
         let target = AsteroidNode(scaleType: .Big, position: CGPoint(x: self.frame.midX*1.5, y: self.frame.midY*1.5))
         self.addChild(target)
         
+        target.movingVector = ship.position - target.position
         target.run(SKAction.move(to: ship.position, duration: 10.0))
+        
     }
 }
 
@@ -101,16 +103,14 @@ extension GameScene: SKPhysicsContactDelegate {
         
         if nodeNames.contains(kAsteroidName) && nodeNames.contains(kBulletName) {
             
+            let asteroidNode = (contact.bodyA.node as? AsteroidNode) ?? (contact.bodyB.node as! AsteroidNode)
+            
+            splitAsteroid(asteroid: asteroidNode)
             contact.bodyA.node?.removeFromParent()
             contact.bodyB.node?.removeFromParent()
             
         } else if nodeNames.contains(kShipName) && nodeNames.contains(kAsteroidName) {
             
-            if contact.bodyA.node == childNode(withName: kShipName) {
-                contact.bodyB.node!.removeFromParent()
-            } else {
-                contact.bodyA.node!.removeFromParent()
-            }
         }
     }
     
@@ -125,4 +125,47 @@ extension GameScene: SKPhysicsContactDelegate {
 //MARK: Collision Event
 extension GameScene {
     
+    func splitAsteroid(asteroid: AsteroidNode) {
+        
+//        let destination = (touchLocation - bullet.position).normalized() * CGPoint(x: 1000, y: 1000) + bullet.position
+        
+        
+        guard let newSize = AsteroidSize.init(rawValue: asteroid.size.rawValue-1) else { return }
+        
+        let newAsteroid0 = AsteroidNode(scaleType: newSize, position: asteroid.position)
+        let newAsteroid1 = AsteroidNode(scaleType: newSize, position: asteroid.position)
+        self.addChild(newAsteroid0)
+        self.addChild(newAsteroid1)
+
+        let newDirectionTuple = collisionDirection(current: asteroid.movingVector)
+        newAsteroid0.movingVector = newDirectionTuple.0
+        newAsteroid0.run(SKAction.move(to: newDirectionTuple.0.normalized() * CGPoint(x: 1000, y: 1000) + asteroid.position, duration: 10.0))
+        
+        newAsteroid1.movingVector = newDirectionTuple.1
+        newAsteroid1.run(SKAction.move(to: newDirectionTuple.1.normalized() * CGPoint(x: 1000, y: 1000) + asteroid.position, duration: 10.0))
+    }
+    
+    func collisionDirection(current: CGPoint) -> (CGPoint, CGPoint) {
+        
+        let type = AsteroidSplitType.init(rawValue: Int.random(in: 0...AsteroidSplitType.allCases.count-1))
+        
+        var result1 = CGPoint(x: -current.y, y: current.x)
+        
+        switch type {
+        case .DiagonalDown:
+            result1 = current + result1
+            break
+        case .Horizontal:
+            break
+        case .DiagonalUp:
+            result1 = current - result1
+        case .none:
+            break
+        }
+        
+        let result2 = result1 * CGPoint(x: -1, y: -1)
+        
+        return (result1, result2)
+    }
+
 }
