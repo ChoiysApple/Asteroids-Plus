@@ -21,7 +21,7 @@ let kShipName: String = "ship"
 
 // Asteroid
 let kAsteroidName: String = "asteroid"
-let kDefaultMoveDuration: TimeInterval = 15.0
+let kDefaultMoveDuration: CFTimeInterval = 15.0
 let kAsteroidMoveAction: String = "asteroidMove"
 
 // Bullet
@@ -33,3 +33,6 @@ let kHUDMargin: CGFloat = 50.0
 let kScoreLabelName: String = "scoreLabel"
 let kLifeLabelName: String = "lifeLabel"
 
+// Animation
+let kExplosionDuration: CFTimeInterval = 0.5
+let kExplosionLength: CGFloat = 10.0

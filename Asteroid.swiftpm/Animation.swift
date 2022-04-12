@@ -9,8 +9,10 @@ import SpriteKit
 
 extension GameScene {
 
-    func makeExplosion(position: CGPoint, length: CGFloat, duration: TimeInterval) {
+    func makeExplosion(position: CGPoint) {
         
+        let length = kExplosionLength
+        let duration = kExplosionDuration
         let radius: CGFloat = 0.5
         
         let dot1 = SKShapeNode(circleOfRadius: radius)
