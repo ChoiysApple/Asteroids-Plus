@@ -74,9 +74,11 @@ extension GameScene {
     }
     
     private func fireBullet(touchLocation: CGPoint) {
+        
+        if let _ = childNode(withName: kBulletName) { return }              // Check is there any existing bullet
+        guard let ship = childNode(withName: kShipName) else { return }     // Check is there ship
     
-        let departure = childNode(withName: kShipName)?.position ?? CGPoint(x: self.frame.midX, y: self.frame.midY)
-
+        let departure = ship.position
         let bullet = getBulletNode(position: departure)
         self.addChild(bullet)
         
