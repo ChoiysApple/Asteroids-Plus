@@ -27,3 +27,9 @@ let kAsteroidMoveAction: String = "asteroidMove"
 // Bullet
 let kBulletName: String = "bullet"
 let kBulletRadius: CGFloat = 2.5
+
+// HUD
+let kHUDMargin: CGFloat = 50.0
+let kScoreLabelName: String = "scoreLabel"
+let kLifeLabelName: String = "lifeLabel"
+

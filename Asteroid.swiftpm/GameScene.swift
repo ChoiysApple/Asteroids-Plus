@@ -11,6 +11,7 @@ class GameScene: SKScene {
     
     // System data
     var score: Int = 0
+    var life: Int = 3
     
     // Physics Contact
     var contactQueue = [SKPhysicsContact]()
@@ -28,6 +29,7 @@ class GameScene: SKScene {
         physicsWorld.contactDelegate = self
         
         configureNodes()
+        configureHUD()
     }
     
     override func update(_ currentTime: TimeInterval) {
@@ -51,6 +53,7 @@ class GameScene: SKScene {
         target.movingVector = CGPoint(x: self.frame.width, y: self.frame.height).normalized()
         target.run(SKAction.move(to: CGPoint(x: self.frame.width+1000, y: self.frame.height+1000), duration: kDefaultMoveDuration))
     }
+    
 }
 
 //MARK: Touch Event
@@ -134,13 +137,19 @@ extension GameScene: SKPhysicsContactDelegate {
             
             let asteroidNode = (contact.bodyA.node as? AsteroidNode) ?? (contact.bodyB.node as! AsteroidNode)
             
-            score += asteroidNode.size.score
+            updateScore(addedScore: asteroidNode.size.score)
+            
             splitAsteroid(asteroid: asteroidNode)
             contact.bodyA.node?.removeFromParent()
             contact.bodyB.node?.removeFromParent()
             
         } else if nodeNames.contains(kShipName) && nodeNames.contains(kAsteroidName) {
             
+            updateLife()
+            
+            let asteroidNode = (contact.bodyA.node as? AsteroidNode) ?? (contact.bodyB.node as! AsteroidNode)
+            splitAsteroid(asteroid: asteroidNode)
+            asteroidNode.removeFromParent()
         }
     }
     
@@ -231,6 +240,44 @@ extension GameScene {
             }
         } 
     }
-    
+}
 
+//MARK: HUD
+extension GameScene {
+    
+    private func configureHUD() {
+        
+        let scoreLabel = SKLabelNode(text: String(format: "Score: %04u", self.score))
+        scoreLabel.position = CGPoint(x: kHUDMargin + scoreLabel.frame.width/2, y: self.frame.height-kHUDMargin)
+        scoreLabel.name = kScoreLabelName
+        self.addChild(scoreLabel)
+        
+        let lifeLabel = SKLabelNode(text: life.lifeString)
+        lifeLabel.position = CGPoint(x: scoreLabel.position.x, y: scoreLabel.position.y - lifeLabel.frame.height)
+        lifeLabel.name = kLifeLabelName
+        self.addChild(lifeLabel)
+    }
+
+    
+    private func updateScore(addedScore: Int) {
+        
+        self.score += addedScore
+        print(score)
+        
+        if let scoreLabel = childNode(withName: kScoreLabelName) as? SKLabelNode {
+            scoreLabel.text = String(format: "Score: %04u", self.score)
+        }
+
+    }
+    
+    private func updateLife() {
+        
+        self.life -= 1
+        print(life)
+        
+        if let lifeLabel = childNode(withName: kLifeLabelName) as? SKLabelNode {
+            lifeLabel.text = String(format: life.lifeString, self.score)
+        }
+
+    }
 }
