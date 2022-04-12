@@ -30,7 +30,6 @@ class ShipNode: SKShapeNode {
         }
         path.addLine(to: scaledPoints[0])
 
-
         self.path = path
         self.strokeColor = .white
         self.lineWidth = kLineWidth
@@ -38,14 +37,13 @@ class ShipNode: SKShapeNode {
         self.fillColor = .black
         self.name = kShipName
         
-        self.physicsBody = SKPhysicsBody(edgeLoopFrom: path)
+        self.physicsBody = SKPhysicsBody(polygonFrom: path)
         self.physicsBody!.affectedByGravity = false
         self.physicsBody?.mass = 1.0
+        self.physicsBody?.isDynamic = true
         
         self.physicsBody!.categoryBitMask = kShipCategory
-        self.physicsBody!.contactTestBitMask = kAsteroidCategory
-        self.physicsBody!.collisionBitMask = kAsteroidCategory
-
+        
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -83,16 +81,12 @@ class AsteroidNode: SKShapeNode {
         self.position = position
         self.name = kAsteroidName
         
-        self.physicsBody = SKPhysicsBody(edgeLoopFrom: path)
+        self.physicsBody = SKPhysicsBody(polygonFrom: path)
         self.physicsBody!.affectedByGravity = false
-        self.physicsBody?.mass = 2.0
+        self.physicsBody?.isDynamic = false
         
         self.physicsBody!.categoryBitMask = kAsteroidCategory
-        self.physicsBody!.contactTestBitMask = 0x0
-        self.physicsBody!.collisionBitMask = kBulletCategory
-        self.physicsBody!.usesPreciseCollisionDetection = true
-        
-        
+        self.physicsBody!.contactTestBitMask = kShipCategory
     }
     
     required init?(coder aDecoder: NSCoder) {

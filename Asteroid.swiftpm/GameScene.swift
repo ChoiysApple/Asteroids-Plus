@@ -47,7 +47,7 @@ class GameScene: SKScene {
         let ship = ShipNode(scale: kShipScale, position: CGPoint(x: self.frame.midX, y: self.frame.midY))
         self.addChild(ship)
         
-        let target = AsteroidNode(scaleType: .Big, position: CGPoint(x: self.frame.midX*1.5, y: self.frame.midY*1.5))
+        let target = AsteroidNode(scaleType: .Big, position: CGPoint(x: self.frame.midX*0.5, y: self.frame.midY*0.5))
         self.addChild(target)
 
         target.movingVector = CGPoint(x: self.frame.width, y: self.frame.height).normalized()
@@ -132,6 +132,8 @@ extension GameScene: SKPhysicsContactDelegate {
         if contact.bodyA.node?.parent == nil || contact.bodyB.node?.parent == nil { return }
       
         let nodeNames = [contact.bodyA.node!.name!, contact.bodyB.node!.name!]
+        
+        print(nodeNames)
         
         if nodeNames.contains(kAsteroidName) && nodeNames.contains(kBulletName) {
             
@@ -262,7 +264,6 @@ extension GameScene {
     private func updateScore(addedScore: Int) {
         
         self.score += addedScore
-        print(score)
         
         if let scoreLabel = childNode(withName: kScoreLabelName) as? SKLabelNode {
             scoreLabel.text = String(format: "Score: %04u", self.score)
