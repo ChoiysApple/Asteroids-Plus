@@ -70,6 +70,14 @@ enum AsteroidSize: Int {
         case .Small: return 5.0
         }
     }
+    
+    var score: Int {
+        switch self {
+        case .Big: return 120
+        case .Middle: return 110
+        case .Small: return 100
+        }
+    }
 }
 
 enum AsteroidSplitType: Int, CaseIterable {

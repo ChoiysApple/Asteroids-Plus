@@ -9,7 +9,13 @@ import SpriteKit
 
 class GameScene: SKScene {
     
+    // System data
+    var score: Int = 0
+    
+    // Physics Contact
     var contactQueue = [SKPhysicsContact]()
+    
+    // Fire
     var timeOfLastFire: CFTimeInterval = 0.0
     var timePerFire: CFTimeInterval = 1.0       // Fire Cooltime
     var systemTime: CFTimeInterval = 1.0
@@ -128,6 +134,7 @@ extension GameScene: SKPhysicsContactDelegate {
             
             let asteroidNode = (contact.bodyA.node as? AsteroidNode) ?? (contact.bodyB.node as! AsteroidNode)
             
+            score += asteroidNode.size.score
             splitAsteroid(asteroid: asteroidNode)
             contact.bodyA.node?.removeFromParent()
             contact.bodyB.node?.removeFromParent()
@@ -222,10 +229,7 @@ extension GameScene {
                 asteroid.removeAllActions()
                 asteroid.run(SKAction.move(to: asteroid.movingVector.normalized() * CGPoint(x: 2000, y: 2000) + asteroid.position, duration: kDefaultMoveDuration))
             }
-                
-                
-        }
-        
+        } 
     }
     
 

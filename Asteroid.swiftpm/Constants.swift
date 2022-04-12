@@ -13,7 +13,7 @@ let kAsteroidCategory: UInt32 = 0x1 << 1
 let kBulletCategory: UInt32 = 0x1 << 2
 
 // Common
-let kLineWidth: CGFloat = 3.0
+let kLineWidth: CGFloat = 2.0
 
 // Ship
 let kShipScale: CGFloat = 3.5
