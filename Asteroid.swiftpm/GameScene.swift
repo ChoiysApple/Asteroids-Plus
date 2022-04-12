@@ -47,11 +47,13 @@ class GameScene: SKScene {
         let ship = ShipNode(scale: kShipScale, position: CGPoint(x: self.frame.midX, y: self.frame.midY))
         self.addChild(ship)
         
-        let target = AsteroidNode(scaleType: .Big, position: CGPoint(x: self.frame.midX*0.5, y: self.frame.midY*0.5))
-        self.addChild(target)
-
-        target.movingVector = CGPoint(x: self.frame.width, y: self.frame.height).normalized()
-        target.run(SKAction.move(to: CGPoint(x: self.frame.width+1000, y: self.frame.height+1000), duration: kDefaultMoveDuration))
+//        let target = AsteroidNode(scaleType: .Big, position: CGPoint(x: self.frame.midX*0.5, y: self.frame.midY*0.5))
+//        self.addChild(target)
+//
+//        target.movingVector = CGPoint(x: self.frame.width, y: self.frame.height).normalized()
+//        target.run(SKAction.move(to: CGPoint(x: self.frame.width+1000, y: self.frame.height+1000), duration: kDefaultMoveDuration))
+        
+        makeExplosion(position: CGPoint(x: self.frame.width*0.75, y: self.frame.height*0.75), length: 10.0, duration: 1.0)
     }
     
 }

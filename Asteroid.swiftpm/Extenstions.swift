@@ -39,6 +39,11 @@ extension CGPoint {
 //MARK: Make String for HUD
 extension Int {
     var lifeString: String {
+        
+        if self <= 0 {
+            return "Game Over"
+        }
+        
         var baseString = "  "
         
         for _ in 1...self {
