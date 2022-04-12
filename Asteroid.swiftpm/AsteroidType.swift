@@ -6,7 +6,6 @@
 //
 
 import SpriteKit
-import SwiftUI
 
 enum AsteroidType: Int, CaseIterable {
     case A, B, C

@@ -22,6 +22,7 @@ class GameScene: SKScene {
     
     override func update(_ currentTime: TimeInterval) {
         processContacts(forUpdate: currentTime)
+        processAsteroidOutScreen()
     }
     
     private func configureNodes() {
@@ -31,10 +32,9 @@ class GameScene: SKScene {
         
         let target = AsteroidNode(scaleType: .Big, position: CGPoint(x: self.frame.midX*1.5, y: self.frame.midY*1.5))
         self.addChild(target)
-        
-        target.movingVector = ship.position - target.position
-        target.run(SKAction.move(to: ship.position, duration: 10.0))
-        
+
+        target.movingVector = CGPoint(x: self.frame.width, y: self.frame.height).normalized()
+        target.run(SKAction.move(to: CGPoint(x: self.frame.width+1000, y: self.frame.height+1000), duration: kDefaultMoveDuration))
     }
 }
 
@@ -122,13 +122,10 @@ extension GameScene: SKPhysicsContactDelegate {
     }
 }
 
-//MARK: Collision Event
+//MARK: Asteroid Event
 extension GameScene {
     
-    func splitAsteroid(asteroid: AsteroidNode) {
-        
-//        let destination = (touchLocation - bullet.position).normalized() * CGPoint(x: 1000, y: 1000) + bullet.position
-        
+    private func splitAsteroid(asteroid: AsteroidNode) {
         
         guard let newSize = AsteroidSize.init(rawValue: asteroid.size.rawValue-1) else { return }
         
@@ -139,13 +136,13 @@ extension GameScene {
 
         let newDirectionTuple = collisionDirection(current: asteroid.movingVector)
         newAsteroid0.movingVector = newDirectionTuple.0
-        newAsteroid0.run(SKAction.move(to: newDirectionTuple.0.normalized() * CGPoint(x: 1000, y: 1000) + asteroid.position, duration: 10.0))
+        newAsteroid0.run(SKAction.move(to: newDirectionTuple.0.normalized() * CGPoint(x: 1000, y: 1000) + asteroid.position, duration: TimeInterval(newSize.scale)))
         
         newAsteroid1.movingVector = newDirectionTuple.1
-        newAsteroid1.run(SKAction.move(to: newDirectionTuple.1.normalized() * CGPoint(x: 1000, y: 1000) + asteroid.position, duration: 10.0))
+        newAsteroid1.run(SKAction.move(to: newDirectionTuple.1.normalized() * CGPoint(x: 1000, y: 1000) + asteroid.position, duration: TimeInterval(newSize.scale)))
     }
     
-    func collisionDirection(current: CGPoint) -> (CGPoint, CGPoint) {
+    private func collisionDirection(current: CGPoint) -> (CGPoint, CGPoint) {
         
         let type = AsteroidSplitType.init(rawValue: Int.random(in: 0...AsteroidSplitType.allCases.count-1))
         
@@ -167,5 +164,55 @@ extension GameScene {
         
         return (result1, result2)
     }
+    
+    
+    private func processAsteroidOutScreen() {
+        
+        let screenSize = self.frame.size
+
+        enumerateChildNodes(withName: kAsteroidName) { node, _ in
+            
+            guard let asteroid = node as? AsteroidNode else { return }
+            
+            let margin: CGFloat = 10.0
+            
+            // right
+            if asteroid.position.x >= screenSize.width + asteroid.frame.width {
+                print("right")
+                asteroid.removeAllActions()
+                asteroid.position = CGPoint(x: -asteroid.frame.width + margin, y: asteroid.position.y)
+                asteroid.run(SKAction.move(to: asteroid.movingVector.normalized() * CGPoint(x: 2000, y: 2000) + asteroid.position, duration: kDefaultMoveDuration))
+              
+            // left
+            } else if asteroid.position.x <= -asteroid.frame.width-margin {
+                print("left")
+                asteroid.removeAllActions()
+                asteroid.position = CGPoint(x: screenSize.width + asteroid.frame.width - margin, y: asteroid.position.y)
+                asteroid.run(SKAction.move(to: asteroid.movingVector.normalized() * CGPoint(x: 2000, y: 2000) + asteroid.position, duration: kDefaultMoveDuration))
+            }
+            
+            // top
+            if asteroid.position.y >= screenSize.height + asteroid.frame.height {
+                
+                print("top")
+                asteroid.removeAllActions()
+                asteroid.position = CGPoint(x: asteroid.position.x, y: -asteroid.frame.width + margin)
+                asteroid.run(SKAction.move(to: asteroid.movingVector.normalized() * CGPoint(x: 2000, y: 2000) + asteroid.position, duration: kDefaultMoveDuration))
+                
+            // bottom
+            } else if asteroid.position.y <= -asteroid.frame.height-margin {
+                
+                print("bottom")
+                asteroid.removeAllActions()
+                asteroid.position = CGPoint(x: asteroid.position.x, y: screenSize.height + asteroid.frame.height - margin)
+                asteroid.run(SKAction.move(to: asteroid.movingVector.normalized() * CGPoint(x: 2000, y: 2000) + asteroid.position, duration: kDefaultMoveDuration))
+            }
+
+                
+                
+        }
+        
+    }
+    
 
 }

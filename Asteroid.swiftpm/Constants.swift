@@ -21,6 +21,8 @@ let kShipName: String = "ship"
 
 // Asteroid
 let kAsteroidName: String = "asteroid"
+let kDefaultMoveDuration: TimeInterval = 15.0
+let kAsteroidMoveAction: String = "asteroidMove"
 
 // Bullet
 let kBulletName: String = "bullet"
