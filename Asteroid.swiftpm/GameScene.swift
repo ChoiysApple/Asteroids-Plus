@@ -36,6 +36,8 @@ class GameScene: SKScene {
         processAsteroidOutScreen()
         
         controlFireRate(forUpdate: currentTime)
+        
+        processGameOver()
     }
     
     private func configure() {
@@ -48,9 +50,6 @@ class GameScene: SKScene {
         
         configureHUD()
         
-        spawnRandomAsteroid()
-        spawnRandomAsteroid()
-        spawnRandomAsteroid()
         spawnRandomAsteroid()
 
     }
@@ -334,4 +333,18 @@ extension GameScene {
         }
 
     }
+}
+
+//MARK: GameOver Logic
+extension GameScene {
+    
+    private func processGameOver() {
+        
+        if life <= 0 {
+            
+        } else if childNode(withName: kAsteroidName) == nil {
+            
+        }
+    }
+    
 }
