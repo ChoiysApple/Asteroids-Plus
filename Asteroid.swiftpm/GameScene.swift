@@ -6,6 +6,7 @@
 //
 
 import SpriteKit
+import SwiftUI
 
 class GameScene: SKScene {
     
@@ -23,13 +24,8 @@ class GameScene: SKScene {
     var isLoaded: Bool = true
         
     override func didMove(to view: SKView) {
-
-        backgroundColor = .black
-
-        physicsWorld.contactDelegate = self
         
-        configureNodes()
-        configureHUD()
+        configure()
     }
     
     override func update(_ currentTime: TimeInterval) {
@@ -42,17 +38,21 @@ class GameScene: SKScene {
         controlFireRate(forUpdate: currentTime)
     }
     
-    private func configureNodes() {
+    private func configure() {
+        
+        self.backgroundColor = .black
+        physicsWorld.contactDelegate = self
         
         let ship = ShipNode(scale: kShipScale, position: CGPoint(x: self.frame.midX, y: self.frame.midY))
         self.addChild(ship)
         
-        let target = AsteroidNode(scaleType: .Big, position: CGPoint(x: self.frame.midX*0.5, y: self.frame.midY*0.5))
-        self.addChild(target)
-
-        target.movingVector = CGPoint(x: self.frame.width, y: self.frame.height).normalized()
-        target.run(SKAction.move(to: CGPoint(x: self.frame.width+1000, y: self.frame.height+1000), duration: kDefaultMoveDuration))
+        configureHUD()
         
+        spawnRandomAsteroid()
+        spawnRandomAsteroid()
+        spawnRandomAsteroid()
+        spawnRandomAsteroid()
+
     }
     
 }
@@ -215,7 +215,6 @@ extension GameScene {
         return (result1, result2)
     }
     
-    
     private func processAsteroidOutScreen() {
         
         let screenSize = self.frame.size
@@ -250,6 +249,50 @@ extension GameScene {
                 asteroid.run(SKAction.move(to: asteroid.movingVector.normalized() * CGPoint(x: 2000, y: 2000) + asteroid.position, duration: kDefaultMoveDuration))
             }
         } 
+    }
+    
+    private func spawnRandomAsteroid() {
+        let target = AsteroidNode(scaleType: .Big, position: randomPoint(target: nil))
+        target.position = randomSpawnPoint(target: target)
+        self.addChild(target)
+
+        let destinationVector = randomPoint(target: target)
+        target.movingVector = destinationVector.normalized()
+        target.run(SKAction.move(to: destinationVector * CGPoint(x: 2000, y: 2000), duration: kDefaultMoveDuration))
+    }
+    
+    private func randomPoint(target: SKNode?) -> CGPoint {
+        
+        let marginX = Float(target?.frame.width ?? 0)
+        let marginY = Float(target?.frame.height ?? 0)
+        
+        let randomX = Float.random(in: -marginX...(Float(self.frame.width) + marginX))
+        let randomY = Float.random(in: -marginY...(Float(self.frame.height) + marginY))
+        
+        return CGPoint(x: CGFloat(randomX), y: CGFloat(randomY))
+    }
+    
+    private func randomSpawnPoint(target: SKNode?) -> CGPoint {
+        
+        let retryLimit = 5
+        
+        let center = childNode(withName: kShipName)?.position ?? CGPoint(x: self.frame.midX, y: self.frame.midY)
+        
+        let xRange = (center.x - target!.frame.width*2)...(center.x + target!.frame.width*2)
+        let yRange = (center.y - target!.frame.height*2)...(center.y + target!.frame.height*2)
+        
+        var result = CGPoint(x: self.frame.width + 100, y: self.frame.height + 100)
+        
+        for _ in 0...retryLimit {
+            
+            result = randomPoint(target: target)
+            
+            if !xRange.contains(result.x) && !yRange.contains(result.y) {
+                return result
+            }
+        }
+        
+        return result
     }
 }
 
