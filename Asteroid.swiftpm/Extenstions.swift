@@ -1,5 +1,5 @@
 //
-//  File.swift
+//  Extenstions.swift
 //  Asteroid
 //
 //  Created by Daegeon Choi on 2022/04/08.
@@ -34,5 +34,22 @@ extension CGPoint {
         return self / CGPoint(x: length(), y: length())
     }
     
+}
 
+//MARK: Make String for HUD
+extension Int {
+    var lifeString: String {
+        
+        if self <= 0 {
+            return "Game Over"
+        }
+        
+        var baseString = "  "
+        
+        for _ in 1...self {
+            baseString.append(contentsOf: "∆ ")
+        }
+        
+        return baseString
+    }
 }

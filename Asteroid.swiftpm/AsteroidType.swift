@@ -1,5 +1,5 @@
 //
-//  File.swift
+//  AsteroidType.swift
 //  Asteroid
 //
 //  Created by Daegeon Choi on 2022/04/11.
@@ -58,8 +58,31 @@ enum AsteroidType: Int, CaseIterable {
     
 }
 
-enum AsteroidSize: CGFloat {
-    case Big = 15.0
-    case Middle = 10.0
-    case Small = 5.0
+enum AsteroidSize: Int {
+    case Big = 2
+    case Middle = 1
+    case Small = 0
+    
+    var scale: CGFloat {
+        switch self {
+        case .Big: return 15.0
+        case .Middle: return 10.0
+        case .Small: return 5.0
+        }
+    }
+    
+    var score: Int {
+        switch self {
+        case .Big: return 120
+        case .Middle: return 110
+        case .Small: return 100
+        }
+    }
 }
+
+enum AsteroidSplitType: Int, CaseIterable {
+    case DiagonalDown = 0          // \
+    case Horizontal = 1            // -
+    case DiagonalUp = 2            // /
+}
+
