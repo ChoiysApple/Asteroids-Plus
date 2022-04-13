@@ -1,5 +1,5 @@
 //
-//  File.swift
+//  Constants.swift
 //  Asteroid
 //
 //  Created by Daegeon Choi on 2022/04/11.
