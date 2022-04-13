@@ -119,7 +119,6 @@ extension MainMenuScene {
     private func spawnRandomAsteroid() {
         let target = AsteroidNode(scaleType: .Big, position: randomPoint())
         target.position = randomSpawnPoint()
-        print(target.position)
         self.addChild(target)
 
         let destinationVector = randomPoint()
@@ -134,10 +133,6 @@ extension MainMenuScene {
         
         let randomX = Float.random(in: -marginX...(Float(self.frame.maxX) + marginX))
         let randomY = Float.random(in: -marginY...(Float(self.frame.maxY) + marginY))
-        
-        print(#function)
-        print(-marginX...(Float(self.frame.maxX) + marginX))
-        print(-marginY...(Float(self.frame.maxY) + marginY))
         
         return CGPoint(x: CGFloat(randomX), y: CGFloat(randomY))
     }

@@ -13,6 +13,7 @@ class GameScene: SKScene {
     // System data
     var score: Int = 0
     var life: Int = 3
+    var wave: Int = 1
     
     // Physics Contact
     var contactQueue = [SKPhysicsContact]()
@@ -26,6 +27,7 @@ class GameScene: SKScene {
     override func didMove(to view: SKView) {
         
         configure()
+        spawnRandomAsteroid(asteroidSpeed: kDefaultMoveDuration)
     }
     
     override func update(_ currentTime: TimeInterval) {
@@ -49,14 +51,6 @@ class GameScene: SKScene {
         self.addChild(ship)
         
         configureHUD()
-        
-        spawnRandomAsteroid()
-        spawnRandomAsteroid()
-        spawnRandomAsteroid()
-        spawnRandomAsteroid()
-        spawnRandomAsteroid()
-        
-
     }
     
 }
@@ -69,6 +63,7 @@ extension GameScene {
         if let point = touches.first?.location(in: self) {
             orientShip(touchLocation: point)
         }
+        
     }
     
     override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
@@ -255,14 +250,14 @@ extension GameScene {
         } 
     }
     
-    private func spawnRandomAsteroid() {
+    private func spawnRandomAsteroid(asteroidSpeed: TimeInterval) {
         let target = AsteroidNode(scaleType: .Big, position: randomPoint(target: nil))
         target.position = randomSpawnPoint(target: target)
         self.addChild(target)
 
         let destinationVector = randomPoint(target: target)
         target.movingVector = destinationVector.normalized()
-        target.run(SKAction.move(to: destinationVector * CGPoint(x: 2000, y: 2000), duration: kDefaultMoveDuration))
+        target.run(SKAction.move(to: destinationVector * CGPoint(x: 2000, y: 2000), duration: speed))
     }
     
     private func randomPoint(target: SKNode?) -> CGPoint {
@@ -348,8 +343,64 @@ extension GameScene {
         if life <= 0 {
             
         } else if childNode(withName: kAsteroidName) == nil {
-            
+            showPopUp()
         }
     }
+    
+    private func startWave(numberOfAsteroid: Int) {
+        
+        for _ in 0...numberOfAsteroid-1 {
+            spawnRandomAsteroid(asteroidSpeed: kDefaultMoveDuration)
+        }
+    }
+    
+    private func showPopUp() {
+        
+        let bg = SKShapeNode(rectOf: CGSize(width: self.frame.width*0.5, height: self.frame.height*0.9))
+        bg.name = kPopupBGName
+        bg.fillColor = .white
+        bg.position = CGPoint(x: self.frame.midX, y: self.frame.midY)
+        self.addChild(bg)
+        
+        let levelLabel = SKLabelNode(text: "Level 1 Clear")
+        levelLabel.name = kPopupTitleName
+        levelLabel.fontName = kFontName
+        levelLabel.fontColor = .black
+        levelLabel.fontSize = 40
+        levelLabel.verticalAlignmentMode = .center
+        levelLabel.horizontalAlignmentMode = .center
+        levelLabel.position = CGPoint(x: self.frame.midX, y: self.frame.maxY - levelLabel.frame.height*2 - 50)
+        levelLabel.zPosition = 10
+        self.addChild(levelLabel)
+        
+        
+    }
+    
+    private func removePopup() {
+        
+        self.childNode(withName: kPopupBGName)?.removeFromParent()
+        self.childNode(withName: kPopupTitleName)?.removeFromParent()
+    }
+    
+    private func gameOver() {
+        
+        let bg = SKShapeNode(rectOf: CGSize(width: self.frame.width*0.5, height: self.frame.height*0.9))
+        bg.name = kPopupBGName
+        bg.fillColor = .white
+        bg.position = CGPoint(x: self.frame.midX, y: self.frame.midY)
+        self.addChild(bg)
+        
+        let levelLabel = SKLabelNode(text: "You Died")
+        levelLabel.name = kPopupTitleName
+        levelLabel.fontName = kFontName
+        levelLabel.fontColor = .black
+        levelLabel.fontSize = 40
+        levelLabel.verticalAlignmentMode = .center
+        levelLabel.horizontalAlignmentMode = .center
+        levelLabel.position = CGPoint(x: self.frame.midX, y: self.frame.maxY - levelLabel.frame.height*2 - 50)
+        levelLabel.zPosition = 10
+        self.addChild(levelLabel)
+    }
+
     
 }
