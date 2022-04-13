@@ -34,7 +34,7 @@ class ShipNode: SKShapeNode {
         self.strokeColor = .white
         self.lineWidth = kLineWidth
         self.position = position
-        self.fillColor = .black
+        self.fillColor = kShipLoadedColor
         self.name = kShipName
         
         self.physicsBody = SKPhysicsBody(polygonFrom: path)

@@ -95,7 +95,7 @@ extension GameScene {
     private func fireBullet(touchLocation: CGPoint) {
         
         guard isLoaded else { return }
-        guard let ship = childNode(withName: kShipName) else { return }     // Check is there ship
+        guard let ship = childNode(withName: kShipName) as? ShipNode else { return }     // Check is there ship
     
         let departure = ship.position
         let bullet = getBulletNode(position: departure)
@@ -110,6 +110,7 @@ extension GameScene {
         
         isLoaded = false
         timeOfLastFire = systemTime
+        ship.fillColor = kShipUnloadedColor
     }
     
     private func controlFireRate(forUpdate currentTime: CFTimeInterval) {
@@ -118,6 +119,11 @@ extension GameScene {
             isLoaded = false
         } else {
             isLoaded = true
+            
+            if let ship = childNode(withName: kShipName) as? ShipNode {
+                ship.fillColor = kShipLoadedColor
+            }
+            
         }
     }
 }

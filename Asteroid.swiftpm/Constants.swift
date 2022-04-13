@@ -18,6 +18,8 @@ let kLineWidth: CGFloat = 2.0
 // Ship
 let kShipScale: CGFloat = 3.5
 let kShipName: String = "ship"
+let kShipLoadedColor: SKColor = .white
+let kShipUnloadedColor: SKColor = .black
 
 // Asteroid
 let kAsteroidName: String = "asteroid"
