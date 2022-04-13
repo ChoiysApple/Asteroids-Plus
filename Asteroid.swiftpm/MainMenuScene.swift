@@ -35,10 +35,6 @@ class MainMenuScene: SKScene {
         spawnRandomAsteroid()
         spawnRandomAsteroid()
         
-        enumerateChildNodes(withName: kAsteroidName) { node, _ in
-            let asteroid = node as? AsteroidNode
-            print(asteroid?.movingVector)
-        }
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
