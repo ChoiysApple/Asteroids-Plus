@@ -51,6 +51,11 @@ class GameScene: SKScene {
         configureHUD()
         
         spawnRandomAsteroid()
+        spawnRandomAsteroid()
+        spawnRandomAsteroid()
+        spawnRandomAsteroid()
+        spawnRandomAsteroid()
+        
 
     }
     
@@ -265,8 +270,8 @@ extension GameScene {
         let marginX = Float(target?.frame.width ?? 0)
         let marginY = Float(target?.frame.height ?? 0)
         
-        let randomX = Float.random(in: -marginX...(Float(self.frame.width) + marginX))
-        let randomY = Float.random(in: -marginY...(Float(self.frame.height) + marginY))
+        let randomX = Float.random(in: -marginX...(Float(self.frame.maxX) + marginX))
+        let randomY = Float.random(in: -marginY...(Float(self.frame.maxY) + marginY))
         
         return CGPoint(x: CGFloat(randomX), y: CGFloat(randomY))
     }
