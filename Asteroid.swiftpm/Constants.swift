@@ -32,6 +32,7 @@ let kBulletRadius: CGFloat = 2.5
 let kHUDMargin: CGFloat = 50.0
 let kScoreLabelName: String = "scoreLabel"
 let kLifeLabelName: String = "lifeLabel"
+let kFontName: String = "Courier"
 
 // Animation
 let kExplosionDuration: CFTimeInterval = 0.5

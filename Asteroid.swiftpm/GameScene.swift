@@ -252,14 +252,16 @@ extension GameScene {
     
     private func configureHUD() {
         
-        let scoreLabel = SKLabelNode(text: String(format: "Score: %04u", self.score))
+        let scoreLabel = SKLabelNode(text: String(format: "%04u pt", self.score))
         scoreLabel.position = CGPoint(x: kHUDMargin + scoreLabel.frame.width/2, y: self.frame.height-kHUDMargin)
         scoreLabel.name = kScoreLabelName
+        scoreLabel.fontName = kFontName
         self.addChild(scoreLabel)
         
         let lifeLabel = SKLabelNode(text: life.lifeString)
-        lifeLabel.position = CGPoint(x: scoreLabel.position.x, y: scoreLabel.position.y - lifeLabel.frame.height)
+        lifeLabel.position = CGPoint(x: scoreLabel.position.x, y: scoreLabel.position.y - lifeLabel.frame.height - 10)
         lifeLabel.name = kLifeLabelName
+        lifeLabel.fontName = kFontName
         self.addChild(lifeLabel)
     }
 
@@ -269,7 +271,7 @@ extension GameScene {
         self.score += addedScore
         
         if let scoreLabel = childNode(withName: kScoreLabelName) as? SKLabelNode {
-            scoreLabel.text = String(format: "Score: %04u", self.score)
+            scoreLabel.text = String(format: "%04u pt", self.score)
         }
 
     }
@@ -277,7 +279,6 @@ extension GameScene {
     private func updateLife() {
         
         self.life -= 1
-        print(life)
         
         if let lifeLabel = childNode(withName: kLifeLabelName) as? SKLabelNode {
             lifeLabel.text = String(format: life.lifeString, self.score)
