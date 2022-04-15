@@ -39,7 +39,8 @@ let kRetroFontName: String = "Courier"
 let kMenuFontName: String = "Avenir"
 let kPopupBGName: String = "popupBG"
 let kPopupTitleName: String = "popupTitle"
-let kPopupScoreName: String = "scoreLabel"
+let kPopupWaveName: String = "popupWave"
+let kPopupScoreName: String = "popupScore"
 
 // Animation
 let kExplosionDuration: CFTimeInterval = 0.5

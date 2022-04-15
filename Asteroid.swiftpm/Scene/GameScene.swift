@@ -14,6 +14,7 @@ class GameScene: SKScene {
     var score: Int = 0
     var life: Int = 3
     var wave: Int = 1
+    var isGameOver: Bool = false
     
     // Physics Contact
     var contactQueue = [SKPhysicsContact]()
@@ -60,6 +61,11 @@ class GameScene: SKScene {
 extension GameScene {
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        
+        if isGameOver {
+            let gameScene = GameScene(size: self.size)
+            self.view?.presentScene(gameScene, transition: .fade(withDuration: 1.0))
+        }
         
         if let point = touches.first?.location(in: self) {
             orientShip(touchLocation: point)
@@ -140,6 +146,7 @@ extension GameScene: SKPhysicsContactDelegate {
       
         let nodeNames = [contact.bodyA.node!.name!, contact.bodyB.node!.name!]
         
+        // Asteroid Hit
         if nodeNames.contains(kAsteroidName) && nodeNames.contains(kBulletName) {
             
             let asteroidNode = (contact.bodyA.node as? AsteroidNode) ?? (contact.bodyB.node as! AsteroidNode)
@@ -151,6 +158,7 @@ extension GameScene: SKPhysicsContactDelegate {
             contact.bodyA.node?.removeFromParent()
             contact.bodyB.node?.removeFromParent()
             
+        // Ship Hit
         } else if nodeNames.contains(kShipName) && nodeNames.contains(kAsteroidName) {
             
             updateLife()
@@ -342,6 +350,7 @@ extension GameScene {
     func processGameOver() {
         
         if life <= 0 {
+            isGameOver = true
             showPopUp()
         } else if childNode(withName: kAsteroidName) == nil {
             wave += 1
@@ -354,6 +363,8 @@ extension GameScene {
         showToastBehind(message: "Wave \(wave)")
         
         let numberOfAsteroid = wave + 1
+        
+        //TODO: Asteroid Difficulty Logic
         
         for _ in 1...numberOfAsteroid {
             spawnRandomAsteroid(asteroidSpeed: kDefaultMoveDuration)
