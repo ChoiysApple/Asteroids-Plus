@@ -68,7 +68,7 @@ extension MainMenuScene {
         self.addChild(titleBG)
         
         let touchAnywhereLabel = SKLabelNode()
-        touchAnywhereLabel.fontName = kFontName
+        touchAnywhereLabel.fontName = kRetroFontName
         touchAnywhereLabel.fontColor = .white
         touchAnywhereLabel.fontSize = 20
         touchAnywhereLabel.text = "> Tap Anywhere to Start <"

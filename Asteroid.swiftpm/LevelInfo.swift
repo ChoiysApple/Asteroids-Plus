@@ -7,17 +7,15 @@
 
 import Foundation
 
-class UserInfo {
-    
-    static let shared = UserInfo()
+class LevelInfo {
 
     var score: Int = 0
     var life: Int = 3
-    var currnetLevel: Int = 1
+    var wave: Int = 1
     
     func reset() {
         score = 0
-        life = 0
-        currnetLevel = 1
+        life = 3
+        wave = 1
     }
 }
