@@ -324,7 +324,6 @@ extension GameScene {
             result = randomPoint(target: target)
             
             if !xRange.contains(result.x) && !yRange.contains(result.y) {
-                print(result)
                 return result
             }
         }

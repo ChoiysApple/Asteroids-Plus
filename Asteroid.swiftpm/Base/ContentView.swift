@@ -16,7 +16,6 @@ struct ContentView: View {
             
             SpriteView(scene: self.scene)
                 .ignoresSafeArea()
-                .previewInterfaceOrientation(.landscapeLeft)
                 .frame(width: geometry.size.width, height: geometry.size.height, alignment: .center)
         }
 
@@ -26,7 +25,5 @@ struct ContentView: View {
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
         ContentView()
-            .previewInterfaceOrientation(.landscapeLeft)
-        
     }
 }
