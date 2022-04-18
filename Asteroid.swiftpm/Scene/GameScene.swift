@@ -15,6 +15,7 @@ class GameScene: SKScene {
     var life: Int = 3
     var wave: Int = 1
     var isGameOver: Bool = false
+    var currentSpeedConstant = 1.0
     
     // Physics Contact
     var contactQueue = [SKPhysicsContact]()
@@ -194,10 +195,10 @@ extension GameScene {
 
         let newDirectionTuple = collisionDirection(current: asteroid.movingVector)
         newAsteroid0.movingVector = newDirectionTuple.0
-        newAsteroid0.run(SKAction.move(to: newDirectionTuple.0.normalized() * CGPoint(x: 1000, y: 1000) + asteroid.position, duration: TimeInterval(newSize.scale)))
+        newAsteroid0.run(SKAction.move(to: newDirectionTuple.0.normalized() * CGPoint(x: 1000, y: 1000) + asteroid.position, duration: TimeInterval(newSize.scale)*currentSpeedConstant))
         
         newAsteroid1.movingVector = newDirectionTuple.1
-        newAsteroid1.run(SKAction.move(to: newDirectionTuple.1.normalized() * CGPoint(x: 1000, y: 1000) + asteroid.position, duration: TimeInterval(newSize.scale)))
+        newAsteroid1.run(SKAction.move(to: newDirectionTuple.1.normalized() * CGPoint(x: 1000, y: 1000) + asteroid.position, duration: TimeInterval(newSize.scale)*currentSpeedConstant))
     }
     
     func collisionDirection(current: CGPoint) -> (CGPoint, CGPoint) {
@@ -254,7 +255,7 @@ extension GameScene {
 
             if originalPosition != asteroid.position {
                 asteroid.removeAllActions()
-                asteroid.run(SKAction.move(to: asteroid.movingVector.normalized() * CGPoint(x: 2000, y: 2000) + asteroid.position, duration: kDefaultMoveDuration))
+                asteroid.run(SKAction.move(to: asteroid.movingVector.normalized() * CGPoint(x: 2000, y: 2000) + asteroid.position, duration: TimeInterval(asteroid.scale)*self.currentSpeedConstant))
             }
         } 
     }
@@ -362,12 +363,11 @@ extension GameScene {
         
         showToastBehind(message: "Wave \(wave)")
         
-        let numberOfAsteroid = wave + 1
-        
-        //TODO: Asteroid Difficulty Logic
+        let numberOfAsteroid = wave
+        currentSpeedConstant *= 0.8
         
         for _ in 1...numberOfAsteroid {
-            spawnRandomAsteroid(asteroidSpeed: kDefaultMoveDuration)
+            spawnRandomAsteroid(asteroidSpeed: kDefaultMoveDuration*currentSpeedConstant)
         }
     }
     
