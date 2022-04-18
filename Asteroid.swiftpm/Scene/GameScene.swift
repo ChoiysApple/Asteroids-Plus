@@ -15,6 +15,7 @@ class GameScene: SKScene {
     var life: Int = 3
     var wave: Int = 1
     var isGameOver: Bool = false
+    var speedConstant = 1/kAsteroidSpeedConstant
     
     // Physics Contact
     var contactQueue = [SKPhysicsContact]()
@@ -254,7 +255,7 @@ extension GameScene {
 
             if originalPosition != asteroid.position {
                 asteroid.removeAllActions()
-                asteroid.run(SKAction.move(to: asteroid.movingVector.normalized() * CGPoint(x: 2000, y: 2000) + asteroid.position, duration: kDefaultMoveDuration))
+                asteroid.run(SKAction.move(to: asteroid.movingVector.normalized() * CGPoint(x: 2000, y: 2000) + asteroid.position, duration: kDefaultMoveDuration*self.speedConstant))
             }
         } 
     }
@@ -362,12 +363,11 @@ extension GameScene {
         
         showToastBehind(message: "Wave \(wave)")
         
-        let numberOfAsteroid = wave + 1
-        
-        //TODO: Asteroid Difficulty Logic
+        let numberOfAsteroid = wave
+        speedConstant *= kAsteroidSpeedConstant
         
         for _ in 1...numberOfAsteroid {
-            spawnRandomAsteroid(asteroidSpeed: kDefaultMoveDuration)
+            spawnRandomAsteroid(asteroidSpeed: kDefaultMoveDuration*speedConstant)
         }
     }
     
