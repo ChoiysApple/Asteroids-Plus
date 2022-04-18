@@ -1,17 +1,21 @@
 //
-//  File.swift
+//  GameScene.swift
 //  Asteroid
 //
 //  Created by Daegeon Choi on 2022/04/08.
 //
 
 import SpriteKit
+import SwiftUI
 
 class GameScene: SKScene {
     
     // System data
     var score: Int = 0
     var life: Int = 3
+    var wave: Int = 1
+    var isGameOver: Bool = false
+    var speedConstant = 1/kAsteroidSpeedConstant
     
     // Physics Contact
     var contactQueue = [SKPhysicsContact]()
@@ -23,13 +27,10 @@ class GameScene: SKScene {
     var isLoaded: Bool = true
         
     override func didMove(to view: SKView) {
-
-        backgroundColor = .black
-
-        physicsWorld.contactDelegate = self
         
-        configureNodes()
-        configureHUD()
+        configure()
+        
+        startWave(wave: wave)
     }
     
     override func update(_ currentTime: TimeInterval) {
@@ -40,19 +41,19 @@ class GameScene: SKScene {
         processAsteroidOutScreen()
         
         controlFireRate(forUpdate: currentTime)
+        
+        processGameOver()
     }
     
-    private func configureNodes() {
+    func configure() {
+        
+        self.backgroundColor = .black
+        physicsWorld.contactDelegate = self
         
         let ship = ShipNode(scale: kShipScale, position: CGPoint(x: self.frame.midX, y: self.frame.midY))
         self.addChild(ship)
         
-        let target = AsteroidNode(scaleType: .Big, position: CGPoint(x: self.frame.midX*0.5, y: self.frame.midY*0.5))
-        self.addChild(target)
-
-        target.movingVector = CGPoint(x: self.frame.width, y: self.frame.height).normalized()
-        target.run(SKAction.move(to: CGPoint(x: self.frame.width+1000, y: self.frame.height+1000), duration: kDefaultMoveDuration))
-        
+        configureHUD()
     }
     
 }
@@ -62,9 +63,15 @@ extension GameScene {
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         
+        if isGameOver {
+            let gameScene = GameScene(size: self.size)
+            self.view?.presentScene(gameScene, transition: .fade(withDuration: 1.0))
+        }
+        
         if let point = touches.first?.location(in: self) {
             orientShip(touchLocation: point)
         }
+        
     }
     
     override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
@@ -85,17 +92,17 @@ extension GameScene {
 //MARK: Ship Action
 extension GameScene {
     
-    private func orientShip(touchLocation: CGPoint) {
+    func orientShip(touchLocation: CGPoint) {
         let ship = childNode(withName: kShipName)
 
         let lookAtConstraint = SKConstraint.orient(to: touchLocation, offset: SKRange(constantValue: -CGFloat.pi / 2))
         ship?.constraints = [ lookAtConstraint ]
     }
     
-    private func fireBullet(touchLocation: CGPoint) {
+    func fireBullet(touchLocation: CGPoint) {
         
         guard isLoaded else { return }
-        guard let ship = childNode(withName: kShipName) else { return }     // Check is there ship
+        guard let ship = childNode(withName: kShipName) as? ShipNode else { return }     // Check is there ship
     
         let departure = ship.position
         let bullet = getBulletNode(position: departure)
@@ -110,14 +117,20 @@ extension GameScene {
         
         isLoaded = false
         timeOfLastFire = systemTime
+        ship.fillColor = kShipUnloadedColor
     }
     
-    private func controlFireRate(forUpdate currentTime: CFTimeInterval) {
+    func controlFireRate(forUpdate currentTime: CFTimeInterval) {
         
         if (currentTime - timeOfLastFire < timePerFire) {
             isLoaded = false
         } else {
             isLoaded = true
+            
+            if let ship = childNode(withName: kShipName) as? ShipNode {
+                ship.fillColor = kShipLoadedColor
+            }
+            
         }
     }
 }
@@ -129,11 +142,12 @@ extension GameScene: SKPhysicsContactDelegate {
         contactQueue.append(contact)
     }
     
-    private func handle(_ contact: SKPhysicsContact) {
+    func handle(_ contact: SKPhysicsContact) {
         if contact.bodyA.node?.parent == nil || contact.bodyB.node?.parent == nil { return }
       
         let nodeNames = [contact.bodyA.node!.name!, contact.bodyB.node!.name!]
         
+        // Asteroid Hit
         if nodeNames.contains(kAsteroidName) && nodeNames.contains(kBulletName) {
             
             let asteroidNode = (contact.bodyA.node as? AsteroidNode) ?? (contact.bodyB.node as! AsteroidNode)
@@ -145,6 +159,7 @@ extension GameScene: SKPhysicsContactDelegate {
             contact.bodyA.node?.removeFromParent()
             contact.bodyB.node?.removeFromParent()
             
+        // Ship Hit
         } else if nodeNames.contains(kShipName) && nodeNames.contains(kAsteroidName) {
             
             updateLife()
@@ -169,7 +184,7 @@ extension GameScene: SKPhysicsContactDelegate {
 //MARK: Asteroid Event
 extension GameScene {
     
-    private func splitAsteroid(asteroid: AsteroidNode) {
+    func splitAsteroid(asteroid: AsteroidNode) {
         
         guard let newSize = AsteroidSize.init(rawValue: asteroid.size.rawValue-1) else { return }
         
@@ -186,7 +201,7 @@ extension GameScene {
         newAsteroid1.run(SKAction.move(to: newDirectionTuple.1.normalized() * CGPoint(x: 1000, y: 1000) + asteroid.position, duration: TimeInterval(newSize.scale)))
     }
     
-    private func collisionDirection(current: CGPoint) -> (CGPoint, CGPoint) {
+    func collisionDirection(current: CGPoint) -> (CGPoint, CGPoint) {
         
         let type = AsteroidSplitType.init(rawValue: Int.random(in: 0...AsteroidSplitType.allCases.count-1))
         
@@ -209,8 +224,7 @@ extension GameScene {
         return (result1, result2)
     }
     
-    
-    private func processAsteroidOutScreen() {
+    func processAsteroidOutScreen() {
         
         let screenSize = self.frame.size
 
@@ -241,47 +255,141 @@ extension GameScene {
 
             if originalPosition != asteroid.position {
                 asteroid.removeAllActions()
-                asteroid.run(SKAction.move(to: asteroid.movingVector.normalized() * CGPoint(x: 2000, y: 2000) + asteroid.position, duration: kDefaultMoveDuration))
+                asteroid.run(SKAction.move(to: asteroid.movingVector.normalized() * CGPoint(x: 2000, y: 2000) + asteroid.position, duration: kDefaultMoveDuration*self.speedConstant))
             }
         } 
+    }
+    
+    func spawnRandomAsteroid(asteroidSpeed: TimeInterval) {
+        let target = AsteroidNode(scaleType: .Big, position: randomPoint(target: nil))
+        target.position = randomSpawnPoint(target: target)
+        self.addChild(target)
+
+        let destinationVector = randomPoint(target: target)
+        target.movingVector = destinationVector.normalized()
+        target.run(SKAction.move(to: destinationVector * CGPoint(x: 2000, y: 2000), duration: speed))
+    }
+    
+    func randomPoint(target: SKNode?) -> CGPoint {
+        
+        let marginX = Float(target?.frame.width ?? 0)
+        let marginY = Float(target?.frame.height ?? 0)
+        
+        let randomX = Float.random(in: -marginX...(Float(self.frame.maxX) + marginX))
+        let randomY = Float.random(in: -marginY...(Float(self.frame.maxY) + marginY))
+        
+        return CGPoint(x: CGFloat(randomX), y: CGFloat(randomY))
+    }
+    
+    func randomSpawnPoint(target: SKNode?) -> CGPoint {
+        
+        let retryLimit = 5
+        
+        let center = childNode(withName: kShipName)?.position ?? CGPoint(x: self.frame.midX, y: self.frame.midY)
+        
+        let xRange = (center.x - target!.frame.width*2)...(center.x + target!.frame.width*2)
+        let yRange = (center.y - target!.frame.height*2)...(center.y + target!.frame.height*2)
+        
+        var result = CGPoint(x: self.frame.width + 100, y: self.frame.height + 100)
+        
+        for _ in 0...retryLimit {
+            
+            result = randomPoint(target: target)
+            
+            if !xRange.contains(result.x) && !yRange.contains(result.y) {
+                return result
+            }
+        }
+        
+        return result
     }
 }
 
 //MARK: HUD
 extension GameScene {
     
-    private func configureHUD() {
+    func configureHUD() {
         
-        let scoreLabel = SKLabelNode(text: String(format: "Score: %04u", self.score))
+        let scoreLabel = SKLabelNode(text: String(format: "%04u pt", self.score))
         scoreLabel.position = CGPoint(x: kHUDMargin + scoreLabel.frame.width/2, y: self.frame.height-kHUDMargin)
         scoreLabel.name = kScoreLabelName
+        scoreLabel.fontName = kRetroFontName
         self.addChild(scoreLabel)
         
         let lifeLabel = SKLabelNode(text: life.lifeString)
-        lifeLabel.position = CGPoint(x: scoreLabel.position.x, y: scoreLabel.position.y - lifeLabel.frame.height)
+        lifeLabel.position = CGPoint(x: scoreLabel.position.x, y: scoreLabel.position.y - lifeLabel.frame.height - 10)
         lifeLabel.name = kLifeLabelName
+        lifeLabel.fontName = kRetroFontName
         self.addChild(lifeLabel)
     }
 
     
-    private func updateScore(addedScore: Int) {
+    func updateScore(addedScore: Int) {
         
         self.score += addedScore
         
         if let scoreLabel = childNode(withName: kScoreLabelName) as? SKLabelNode {
-            scoreLabel.text = String(format: "Score: %04u", self.score)
+            scoreLabel.text = String(format: "%04u pt", self.score)
         }
 
     }
     
-    private func updateLife() {
+    func updateLife() {
         
         self.life -= 1
-        print(life)
         
         if let lifeLabel = childNode(withName: kLifeLabelName) as? SKLabelNode {
             lifeLabel.text = String(format: life.lifeString, self.score)
         }
 
     }
+}
+
+//MARK: Game Over Logic
+extension GameScene {
+    
+    func processGameOver() {
+        
+        if life <= 0 {
+            isGameOver = true
+            showPopUp()
+        } else if childNode(withName: kAsteroidName) == nil {
+            wave += 1
+            startWave(wave: wave)
+        }
+    }
+    
+    func startWave(wave: Int) {
+        
+        showToastBehind(message: "Wave \(wave)")
+        
+        let numberOfAsteroid = wave
+        speedConstant *= kAsteroidSpeedConstant
+        
+        for _ in 1...numberOfAsteroid {
+            spawnRandomAsteroid(asteroidSpeed: kDefaultMoveDuration*speedConstant)
+        }
+    }
+    
+    func showToastBehind(message: String) {
+        
+        let labelNode = SKLabelNode(text: message)
+        labelNode.fontName = "\(kMenuFontName)-Medium"
+        labelNode.fontColor = .lightGray
+        labelNode.fontSize = 60
+        labelNode.zPosition = -20
+        self.addChild(labelNode)
+        
+        var start = CGPoint(x: -labelNode.frame.width, y: self.frame.midY)
+        var end = CGPoint(x: self.frame.maxX+labelNode.frame.width, y: self.frame.midY)
+        if Bool.random() { (start, end) = (end, start) }
+        
+        labelNode.position = start
+        
+        labelNode.run(SKAction.sequence([
+            SKAction.move(to: end, duration: 5.0),
+            SKAction.removeFromParent()
+        ]))
+    }
+
 }

@@ -8,15 +8,15 @@ import PackageDescription
 import AppleProductTypes
 
 let package = Package(
-    name: "Asteroid",
+    name: "Asteroid+",
     platforms: [
         .iOS("15.2")
     ],
     products: [
         .iOSApplication(
-            name: "Asteroid",
+            name: "Asteroid+",
             targets: ["AppModule"],
-            bundleIdentifier: "com.choiysapple.Asteroid",
+            bundleIdentifier: "com.choiysapple.AsteroidPlus",
             teamIdentifier: "ZW6466CHF4",
             displayVersion: "1.0",
             bundleVersion: "1",

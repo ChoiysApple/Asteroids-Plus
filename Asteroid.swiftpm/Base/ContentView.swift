@@ -4,10 +4,10 @@ import SpriteKit
 struct ContentView: View {
     
     var scene: SKScene {
-         let scene = GameScene()
+        let scene = MainMenuScene()
         scene.size = CGSize(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height)
-         scene.scaleMode = .fill
-         return scene
+        scene.scaleMode = .fill
+        return scene
      }
     
     var body: some View {
