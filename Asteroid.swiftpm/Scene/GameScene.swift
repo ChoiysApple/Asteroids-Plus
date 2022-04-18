@@ -119,6 +119,8 @@ extension GameScene {
         isLoaded = false
         timeOfLastFire = systemTime
         ship.fillColor = kShipUnloadedColor
+        
+        run(SKAction.playSoundFileNamed("Fire.wav", waitForCompletion: false))
     }
     
     func controlFireRate(forUpdate currentTime: CFTimeInterval) {
@@ -167,6 +169,8 @@ extension GameScene: SKPhysicsContactDelegate {
             
             updateAsteroidLeft()
             
+            run(SKAction.playSoundFileNamed("AsteroidHit.wav", waitForCompletion: false))
+            
         // Hit Fast Fire Item
         } else if nodeNames.contains(kGunItemName) && nodeNames.contains(kBulletName) {
                 
@@ -174,6 +178,8 @@ extension GameScene: SKPhysicsContactDelegate {
             
             contact.bodyA.node?.removeFromParent()
             contact.bodyB.node?.removeFromParent()
+            
+            run(SKAction.playSoundFileNamed("BulletUp.wav", waitForCompletion: false))
             
         
         // Hit Life Item
@@ -183,6 +189,8 @@ extension GameScene: SKPhysicsContactDelegate {
         
             contact.bodyA.node?.removeFromParent()
             contact.bodyB.node?.removeFromParent()
+            
+            run(SKAction.playSoundFileNamed("LifeUp.wav", waitForCompletion: false))
             
         // Ship Hit
         } else if nodeNames.contains(kShipName) && nodeNames.contains(kAsteroidName) {
@@ -195,6 +203,8 @@ extension GameScene: SKPhysicsContactDelegate {
             splitAsteroid(asteroid: asteroidNode)
             
             asteroidNode.removeFromParent()
+            
+            run(SKAction.playSoundFileNamed("ShipHit.wav", waitForCompletion: false))
         }
     }
     
@@ -462,6 +472,8 @@ extension GameScene {
             isGameOver = true
             showPopUp()
             removeHUD()
+            self.childNode(withName: kShipName)?.removeFromParent()
+            
         } else if childNode(withName: kAsteroidName) == nil {
             wave += 1
             startWave(wave: wave)
@@ -481,6 +493,8 @@ extension GameScene {
             spawnRandomAsteroid(asteroidSpeed: kDefaultMoveDuration*speedConstant)
         }
         updateAsteroidLeft()
+        
+        run(SKAction.playSoundFileNamed("WaveStart.wav", waitForCompletion: false))
         
     }
     
