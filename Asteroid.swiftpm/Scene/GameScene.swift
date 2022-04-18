@@ -158,7 +158,7 @@ extension GameScene: SKPhysicsContactDelegate {
             
             splitAsteroid(asteroid: asteroidNode)
             
-            if Int.random(in: 1...100) <= 15 {
+            if Int.random(in: 1...100) <= 10 {
                 dropRandomItem(position: asteroidNode.position)
             }
             
@@ -302,8 +302,8 @@ extension GameScene {
         let marginX = Float(target?.frame.width ?? 0)
         let marginY = Float(target?.frame.height ?? 0)
         
-        let randomX = Float.random(in: -marginX...(Float(self.frame.maxX) + marginX))
-        let randomY = Float.random(in: -marginY...(Float(self.frame.maxY) + marginY))
+        let randomX = Float.random(in: -marginX...(Float(self.frame.width) + marginX))
+        let randomY = Float.random(in: -marginY...(Float(self.frame.height) + marginY))
         
         return CGPoint(x: CGFloat(randomX), y: CGFloat(randomY))
     }
@@ -324,6 +324,7 @@ extension GameScene {
             result = randomPoint(target: target)
             
             if !xRange.contains(result.x) && !yRange.contains(result.y) {
+                print(result)
                 return result
             }
         }
