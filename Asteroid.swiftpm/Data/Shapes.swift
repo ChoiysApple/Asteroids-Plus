@@ -111,3 +111,35 @@ public func getBulletNode(position: CGPoint) -> SKShapeNode {
     
     return bullet
 }
+
+public func getLifeItemNode(position: CGPoint) -> SKSpriteNode {
+    
+    let life = SKSpriteNode(imageNamed: "LifeItem")
+    life.size = CGSize(width: life.size.width * 2, height: life.size.height * 2)
+    life.position = position
+    life.name = kLifeItemName
+    
+    life.physicsBody = SKPhysicsBody(rectangleOf: life.size)
+    life.physicsBody!.affectedByGravity = false
+    life.physicsBody!.categoryBitMask = kAsteroidCategory
+    life.physicsBody!.usesPreciseCollisionDetection = true
+        
+    return life
+}
+
+public func getBulletItemNode(position: CGPoint) -> SKSpriteNode {
+    
+    let bullet = SKSpriteNode(imageNamed: "BulletItem")
+    bullet.size = CGSize(width: bullet.size.width * 2, height: bullet.size.height * 2)
+    bullet.position = position
+    bullet.name = kGunItemName
+    
+    bullet.physicsBody = SKPhysicsBody(rectangleOf: bullet.size)
+    bullet.physicsBody!.affectedByGravity = false
+    bullet.physicsBody!.categoryBitMask = kAsteroidCategory
+    bullet.physicsBody!.usesPreciseCollisionDetection = true
+        
+    return bullet
+}
+
+

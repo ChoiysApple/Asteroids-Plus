@@ -31,6 +31,10 @@ let kAsteroidSpeedConstant: CFTimeInterval = 0.9
 let kBulletName: String = "bullet"
 let kBulletRadius: CGFloat = 2.5
 
+// Item
+let kLifeItemName: String = "LifeItem"
+let kGunItemName: String = "GunItem"
+
 // HUD
 let kHUDMargin: CGFloat = 50.0
 
@@ -38,6 +42,9 @@ let kScoreLabelName: String = "scoreLabel"
 let kLifeLabelName: String = "lifeLabel"
 let kRetroFontName: String = "Courier"
 let kMenuFontName: String = "Avenir"
+let kAsteroidLeftTitleName: String = "asteroidLeftTitle"
+let kAsteroidLeftNumberName: String = "asteroidLeftNumber"
+
 let kPopupBGName: String = "popupBG"
 let kPopupTitleName: String = "popupTitle"
 let kPopupWaveName: String = "popupWave"

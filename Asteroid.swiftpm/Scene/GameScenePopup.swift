@@ -20,7 +20,7 @@ extension GameScene {
         
         let levelLabel = SKLabelNode(text: "You Died")
         levelLabel.name = kPopupTitleName
-        levelLabel.fontName = kMenuFontName
+        levelLabel.fontName = "\(kMenuFontName)-Medium"
         levelLabel.fontColor = .black
         levelLabel.fontSize = 40
         levelLabel.verticalAlignmentMode = .center
@@ -41,11 +41,11 @@ extension GameScene {
         self.addChild(waveLabel)
 
         
-        let scoreLabel = SKLabelNode(text: "Score: \(score)pt")
+        let scoreLabel = SKLabelNode(text: "\(score)pt")
         scoreLabel.name = kPopupScoreName
         scoreLabel.fontName = kMenuFontName
         scoreLabel.fontColor = .black
-        scoreLabel.fontSize = 30
+        scoreLabel.fontSize = 80
         scoreLabel.verticalAlignmentMode = .center
         scoreLabel.horizontalAlignmentMode = .center
         scoreLabel.position = CGPoint(x: self.frame.midX, y: waveLabel.frame.minY - scoreLabel.frame.height*2 - 20)
@@ -57,14 +57,14 @@ extension GameScene {
         touchAnywhereLabel.fontName = kRetroFontName
         touchAnywhereLabel.fontColor = .black
         touchAnywhereLabel.fontSize = 20
-        touchAnywhereLabel.position = CGPoint(x: self.frame.midX, y: scoreLabel.frame.minY - 50)
+        touchAnywhereLabel.position = CGPoint(x: self.frame.midX, y: scoreLabel.frame.minY/2)
         self.addChild(touchAnywhereLabel)
     }
     
     func removePopup() {
         self.childNode(withName: kPopupBGName)?.removeFromParent()
         self.childNode(withName: kPopupTitleName)?.removeFromParent()
-        self.childNode(withName: kScoreLabelName)?.removeFromParent()
+        self.childNode(withName: kPopupScoreName)?.removeFromParent()
     }
     
 }

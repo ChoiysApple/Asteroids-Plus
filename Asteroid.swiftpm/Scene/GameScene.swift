@@ -16,13 +16,13 @@ class GameScene: SKScene {
     var wave: Int = 1
     var isGameOver: Bool = false
     var speedConstant = 1/kAsteroidSpeedConstant
+    var timePerFire: CFTimeInterval = 1.0           // Fire Cooltime
     
     // Physics Contact
     var contactQueue = [SKPhysicsContact]()
     
     // Fire
     var timeOfLastFire: CFTimeInterval = 0.0
-    var timePerFire: CFTimeInterval = 1.0       // Fire Cooltime
     var systemTime: CFTimeInterval = 1.0
     var isLoaded: Bool = true
         
@@ -31,6 +31,7 @@ class GameScene: SKScene {
         configure()
         
         startWave(wave: wave)
+        
     }
     
     override func update(_ currentTime: TimeInterval) {
@@ -118,6 +119,8 @@ extension GameScene {
         isLoaded = false
         timeOfLastFire = systemTime
         ship.fillColor = kShipUnloadedColor
+        
+        run(SKAction.playSoundFileNamed("Fire.wav", waitForCompletion: false))
     }
     
     func controlFireRate(forUpdate currentTime: CFTimeInterval) {
@@ -156,13 +159,43 @@ extension GameScene: SKPhysicsContactDelegate {
             updateScore(addedScore: asteroidNode.size.score)
             
             splitAsteroid(asteroid: asteroidNode)
+            
+            if Int.random(in: 1...100) <= 10 {
+                dropRandomItem(position: asteroidNode.position)
+            }
+            
             contact.bodyA.node?.removeFromParent()
             contact.bodyB.node?.removeFromParent()
+            
+            updateAsteroidLeft()
+            
+            run(SKAction.playSoundFileNamed("AsteroidHit.wav", waitForCompletion: false))
+            
+        // Hit Fast Fire Item
+        } else if nodeNames.contains(kGunItemName) && nodeNames.contains(kBulletName) {
+                
+            hitBulletItem()
+            
+            contact.bodyA.node?.removeFromParent()
+            contact.bodyB.node?.removeFromParent()
+            
+            run(SKAction.playSoundFileNamed("BulletUp.wav", waitForCompletion: false))
+            
+        
+        // Hit Life Item
+        } else if nodeNames.contains(kLifeItemName) && nodeNames.contains(kBulletName) {
+                
+            hitLifeItem()
+        
+            contact.bodyA.node?.removeFromParent()
+            contact.bodyB.node?.removeFromParent()
+            
+            run(SKAction.playSoundFileNamed("LifeUp.wav", waitForCompletion: false))
             
         // Ship Hit
         } else if nodeNames.contains(kShipName) && nodeNames.contains(kAsteroidName) {
             
-            updateLife()
+            updateLife(offset: -1)
             
             let asteroidNode = (contact.bodyA.node as? AsteroidNode) ?? (contact.bodyB.node as! AsteroidNode)
             
@@ -170,6 +203,8 @@ extension GameScene: SKPhysicsContactDelegate {
             splitAsteroid(asteroid: asteroidNode)
             
             asteroidNode.removeFromParent()
+            
+            run(SKAction.playSoundFileNamed("ShipHit.wav", waitForCompletion: false))
         }
     }
     
@@ -181,9 +216,9 @@ extension GameScene: SKPhysicsContactDelegate {
     }
 }
 
-//MARK: Asteroid Event
 extension GameScene {
     
+    //MARK: Asteroid Hit
     func splitAsteroid(asteroid: AsteroidNode) {
         
         guard let newSize = AsteroidSize.init(rawValue: asteroid.size.rawValue-1) else { return }
@@ -224,6 +259,7 @@ extension GameScene {
         return (result1, result2)
     }
     
+    //MARK: Asteroid Out Screen
     func processAsteroidOutScreen() {
         
         let screenSize = self.frame.size
@@ -260,6 +296,7 @@ extension GameScene {
         } 
     }
     
+    //MARK: Spawn Asteroid
     func spawnRandomAsteroid(asteroidSpeed: TimeInterval) {
         let target = AsteroidNode(scaleType: .Big, position: randomPoint(target: nil))
         target.position = randomSpawnPoint(target: target)
@@ -269,14 +306,14 @@ extension GameScene {
         target.movingVector = destinationVector.normalized()
         target.run(SKAction.move(to: destinationVector * CGPoint(x: 2000, y: 2000), duration: speed))
     }
-    
+        
     func randomPoint(target: SKNode?) -> CGPoint {
         
         let marginX = Float(target?.frame.width ?? 0)
         let marginY = Float(target?.frame.height ?? 0)
         
-        let randomX = Float.random(in: -marginX...(Float(self.frame.maxX) + marginX))
-        let randomY = Float.random(in: -marginY...(Float(self.frame.maxY) + marginY))
+        let randomX = Float.random(in: -marginX...(Float(self.frame.width) + marginX))
+        let randomY = Float.random(in: -marginY...(Float(self.frame.height) + marginY))
         
         return CGPoint(x: CGFloat(randomX), y: CGFloat(randomY))
     }
@@ -305,6 +342,52 @@ extension GameScene {
     }
 }
 
+//MARK: Item
+extension GameScene {
+    
+    func spawnRandomItem() {
+        
+        let item = Bool.random() ? getLifeItemNode(position: CGPoint(x: self.frame.midX*0.5, y: self.frame.midY)) : getBulletItemNode(position: CGPoint(x: self.frame.midX*1.5, y: self.frame.midY))
+        item.position = randomSpawnPoint(target: AsteroidNode(scaleType: .Big, position: CGPoint(x: 0,y: 0)))
+        self.addChild(item)
+        
+        item.run(SKAction.sequence([
+            SKAction.move(to: randomSpawnPoint(target: item).normalized() * CGPoint(x: 2000, y: 2000), duration: kDefaultMoveDuration),
+            SKAction.removeFromParent()
+        ]))
+    }
+    
+    func dropRandomItem(position: CGPoint) {
+        
+        let item = Bool.random() ? getLifeItemNode(position: CGPoint(x: self.frame.midX*0.5, y: self.frame.midY)) : getBulletItemNode(position: CGPoint(x: self.frame.midX*1.5, y: self.frame.midY))
+        item.position = position
+        self.addChild(item)
+        
+        item.run(SKAction.sequence([
+            SKAction.move(to: randomSpawnPoint(target: item).normalized() * CGPoint(x: 2000, y: 2000), duration: kDefaultMoveDuration),
+            SKAction.removeFromParent()
+        ]))
+
+    }
+    
+    func hitLifeItem() {
+        
+        updateLife(offset: +1)
+        
+        showToastBehind(message: "1 more Life")
+    }
+    
+    func hitBulletItem() {
+        
+        if timePerFire > 0.1 {
+            timePerFire -= 0.1
+        }
+        
+        showToastBehind(message: "Fire Faster")
+    }
+
+}
+
 //MARK: HUD
 extension GameScene {
     
@@ -320,7 +403,30 @@ extension GameScene {
         lifeLabel.position = CGPoint(x: scoreLabel.position.x, y: scoreLabel.position.y - lifeLabel.frame.height - 10)
         lifeLabel.name = kLifeLabelName
         lifeLabel.fontName = kRetroFontName
+        lifeLabel.fontSize = 20
         self.addChild(lifeLabel)
+        
+        let asteroidLabel = SKLabelNode(text: String(format: "Asteroids Left:", self.score))
+        asteroidLabel.horizontalAlignmentMode = .center
+        asteroidLabel.position = CGPoint(x: self.frame.width-(kHUDMargin + asteroidLabel.frame.width/2), y: self.frame.height-kHUDMargin)
+        asteroidLabel.name = kAsteroidLeftTitleName
+        asteroidLabel.fontName = kRetroFontName
+        asteroidLabel.fontSize = 20
+        self.addChild(asteroidLabel)
+        
+        let asteroidNumberLabel = SKLabelNode(text: String(format: "%02u", self.score))
+        asteroidLabel.horizontalAlignmentMode = .center
+        asteroidNumberLabel.name = kAsteroidLeftNumberName
+        asteroidNumberLabel.fontName = kRetroFontName
+        asteroidNumberLabel.position = CGPoint(x: asteroidLabel.frame.midX, y: asteroidLabel.frame.minY-asteroidNumberLabel.frame.height-10)
+        self.addChild(asteroidNumberLabel)
+    }
+    
+    func removeHUD() {
+        self.childNode(withName: kScoreLabelName)
+        self.childNode(withName: kLifeLabelName)
+        self.childNode(withName: kAsteroidLeftTitleName)
+        self.childNode(withName: kAsteroidLeftNumberName)
     }
 
     
@@ -334,14 +440,26 @@ extension GameScene {
 
     }
     
-    func updateLife() {
+    func updateLife(offset: Int) {
         
-        self.life -= 1
+        self.life += offset
         
         if let lifeLabel = childNode(withName: kLifeLabelName) as? SKLabelNode {
             lifeLabel.text = String(format: life.lifeString, self.score)
         }
-
+    }
+    
+    func updateAsteroidLeft() {
+        
+        var count = 0
+        enumerateChildNodes(withName: kAsteroidName) { _, _ in
+            count += 1
+        }
+        
+        if let leftLabel = childNode(withName: kAsteroidLeftNumberName) as? SKLabelNode {
+            leftLabel.text = String(format: "%02u", count)
+        }
+        
     }
 }
 
@@ -353,10 +471,15 @@ extension GameScene {
         if life <= 0 {
             isGameOver = true
             showPopUp()
+            removeHUD()
+            self.childNode(withName: kShipName)?.removeFromParent()
+            
         } else if childNode(withName: kAsteroidName) == nil {
             wave += 1
             startWave(wave: wave)
+            spawnRandomItem()
         }
+        
     }
     
     func startWave(wave: Int) {
@@ -369,6 +492,10 @@ extension GameScene {
         for _ in 1...numberOfAsteroid {
             spawnRandomAsteroid(asteroidSpeed: kDefaultMoveDuration*speedConstant)
         }
+        updateAsteroidLeft()
+        
+        run(SKAction.playSoundFileNamed("WaveStart.wav", waitForCompletion: false))
+        
     }
     
     func showToastBehind(message: String) {

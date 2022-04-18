@@ -27,17 +27,23 @@ let package = Package(
                 .phone
             ],
             supportedInterfaceOrientations: [
-                .portrait,
                 .landscapeRight,
-                .landscapeLeft,
-                .portraitUpsideDown(.when(deviceFamilies: [.pad]))
+                .landscapeLeft
             ]
         )
     ],
     targets: [
         .executableTarget(
             name: "AppModule",
-            path: "."
+            path: ".",
+            resources: [
+                .copy("./Sound/WaveStart.wav"),
+                .copy("./Sound/ShipHit.wav"),
+                .copy("./Sound/LifeUp.wav"),
+                .copy("./Sound/Fire.wav"),
+                .copy("./Sound/BulletUp.wav"),
+                .copy("./Sound/AsteroidHit.wav")
+                       ]
         )
     ]
 )
