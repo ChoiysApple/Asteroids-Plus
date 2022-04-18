@@ -159,6 +159,8 @@ extension GameScene: SKPhysicsContactDelegate {
             contact.bodyA.node?.removeFromParent()
             contact.bodyB.node?.removeFromParent()
             
+            updateAsteroidLeft()
+            
         // Ship Hit
         } else if nodeNames.contains(kShipName) && nodeNames.contains(kAsteroidName) {
             
@@ -321,6 +323,21 @@ extension GameScene {
         lifeLabel.name = kLifeLabelName
         lifeLabel.fontName = kRetroFontName
         self.addChild(lifeLabel)
+        
+        let asteroidLabel = SKLabelNode(text: String(format: "Asteroids Left:", self.score))
+        asteroidLabel.horizontalAlignmentMode = .center
+        asteroidLabel.position = CGPoint(x: self.frame.width-(kHUDMargin + asteroidLabel.frame.width/2), y: self.frame.height-kHUDMargin)
+        asteroidLabel.name = kAsteroidLeftTitleName
+        asteroidLabel.fontName = kRetroFontName
+        asteroidLabel.fontSize = 20
+        self.addChild(asteroidLabel)
+        
+        let asteroidNumberLabel = SKLabelNode(text: String(format: "%02u", self.score))
+        asteroidLabel.horizontalAlignmentMode = .center
+        asteroidNumberLabel.name = kAsteroidLeftNumberName
+        asteroidNumberLabel.fontName = kRetroFontName
+        asteroidNumberLabel.position = CGPoint(x: asteroidLabel.frame.midX, y: asteroidLabel.frame.minY-asteroidNumberLabel.frame.height-10)
+        self.addChild(asteroidNumberLabel)
     }
 
     
@@ -341,7 +358,19 @@ extension GameScene {
         if let lifeLabel = childNode(withName: kLifeLabelName) as? SKLabelNode {
             lifeLabel.text = String(format: life.lifeString, self.score)
         }
-
+    }
+    
+    func updateAsteroidLeft() {
+        
+        var count = 0
+        enumerateChildNodes(withName: kAsteroidName) { _, _ in
+            count += 1
+        }
+        
+        if let leftLabel = childNode(withName: kAsteroidLeftNumberName) as? SKLabelNode {
+            leftLabel.text = String(format: "%02u", count)
+        }
+        
     }
 }
 
@@ -357,6 +386,7 @@ extension GameScene {
             wave += 1
             startWave(wave: wave)
         }
+        
     }
     
     func startWave(wave: Int) {
@@ -369,6 +399,7 @@ extension GameScene {
         for _ in 1...numberOfAsteroid {
             spawnRandomAsteroid(asteroidSpeed: kDefaultMoveDuration*speedConstant)
         }
+        updateAsteroidLeft()
     }
     
     func showToastBehind(message: String) {
