@@ -16,13 +16,13 @@ class GameScene: SKScene {
     var wave: Int = 1
     var isGameOver: Bool = false
     var speedConstant = 1/kAsteroidSpeedConstant
+    var timePerFire: CFTimeInterval = 1.0           // Fire Cooltime
     
     // Physics Contact
     var contactQueue = [SKPhysicsContact]()
     
     // Fire
     var timeOfLastFire: CFTimeInterval = 0.0
-    var timePerFire: CFTimeInterval = 1.0       // Fire Cooltime
     var systemTime: CFTimeInterval = 1.0
     var isLoaded: Bool = true
         
@@ -31,6 +31,7 @@ class GameScene: SKScene {
         configure()
         
         startWave(wave: wave)
+        
     }
     
     override func update(_ currentTime: TimeInterval) {
@@ -156,15 +157,37 @@ extension GameScene: SKPhysicsContactDelegate {
             updateScore(addedScore: asteroidNode.size.score)
             
             splitAsteroid(asteroid: asteroidNode)
+            
+            if Int.random(in: 1...100) <= 15 {
+                dropRandomItem(position: asteroidNode.position)
+            }
+            
             contact.bodyA.node?.removeFromParent()
             contact.bodyB.node?.removeFromParent()
             
             updateAsteroidLeft()
             
+        // Hit Fast Fire Item
+        } else if nodeNames.contains(kGunItemName) && nodeNames.contains(kBulletName) {
+                
+            hitBulletItem()
+            
+            contact.bodyA.node?.removeFromParent()
+            contact.bodyB.node?.removeFromParent()
+            
+        
+        // Hit Life Item
+        } else if nodeNames.contains(kLifeItemName) && nodeNames.contains(kBulletName) {
+                
+            hitLifeItem()
+        
+            contact.bodyA.node?.removeFromParent()
+            contact.bodyB.node?.removeFromParent()
+            
         // Ship Hit
         } else if nodeNames.contains(kShipName) && nodeNames.contains(kAsteroidName) {
             
-            updateLife()
+            updateLife(offset: -1)
             
             let asteroidNode = (contact.bodyA.node as? AsteroidNode) ?? (contact.bodyB.node as! AsteroidNode)
             
@@ -183,9 +206,9 @@ extension GameScene: SKPhysicsContactDelegate {
     }
 }
 
-//MARK: Asteroid Event
 extension GameScene {
     
+    //MARK: Asteroid Hit
     func splitAsteroid(asteroid: AsteroidNode) {
         
         guard let newSize = AsteroidSize.init(rawValue: asteroid.size.rawValue-1) else { return }
@@ -226,6 +249,7 @@ extension GameScene {
         return (result1, result2)
     }
     
+    //MARK: Asteroid Out Screen
     func processAsteroidOutScreen() {
         
         let screenSize = self.frame.size
@@ -262,6 +286,7 @@ extension GameScene {
         } 
     }
     
+    //MARK: Spawn Asteroid
     func spawnRandomAsteroid(asteroidSpeed: TimeInterval) {
         let target = AsteroidNode(scaleType: .Big, position: randomPoint(target: nil))
         target.position = randomSpawnPoint(target: target)
@@ -271,7 +296,7 @@ extension GameScene {
         target.movingVector = destinationVector.normalized()
         target.run(SKAction.move(to: destinationVector * CGPoint(x: 2000, y: 2000), duration: speed))
     }
-    
+        
     func randomPoint(target: SKNode?) -> CGPoint {
         
         let marginX = Float(target?.frame.width ?? 0)
@@ -307,6 +332,52 @@ extension GameScene {
     }
 }
 
+//MARK: Item
+extension GameScene {
+    
+    func spawnRandomItem() {
+        
+        let item = Bool.random() ? getLifeItemNode(position: CGPoint(x: self.frame.midX*0.5, y: self.frame.midY)) : getBulletItemNode(position: CGPoint(x: self.frame.midX*1.5, y: self.frame.midY))
+        item.position = randomSpawnPoint(target: AsteroidNode(scaleType: .Big, position: CGPoint(x: 0,y: 0)))
+        self.addChild(item)
+        
+        item.run(SKAction.sequence([
+            SKAction.move(to: randomSpawnPoint(target: item).normalized() * CGPoint(x: 2000, y: 2000), duration: kDefaultMoveDuration),
+            SKAction.removeFromParent()
+        ]))
+    }
+    
+    func dropRandomItem(position: CGPoint) {
+        
+        let item = Bool.random() ? getLifeItemNode(position: CGPoint(x: self.frame.midX*0.5, y: self.frame.midY)) : getBulletItemNode(position: CGPoint(x: self.frame.midX*1.5, y: self.frame.midY))
+        item.position = position
+        self.addChild(item)
+        
+        item.run(SKAction.sequence([
+            SKAction.move(to: randomSpawnPoint(target: item).normalized() * CGPoint(x: 2000, y: 2000), duration: kDefaultMoveDuration),
+            SKAction.removeFromParent()
+        ]))
+
+    }
+    
+    func hitLifeItem() {
+        
+        updateLife(offset: +1)
+        
+        showToastBehind(message: "1 more Life")
+    }
+    
+    func hitBulletItem() {
+        
+        if timePerFire > 0.1 {
+            timePerFire -= 0.1
+        }
+        
+        showToastBehind(message: "Fire Faster")
+    }
+
+}
+
 //MARK: HUD
 extension GameScene {
     
@@ -322,6 +393,7 @@ extension GameScene {
         lifeLabel.position = CGPoint(x: scoreLabel.position.x, y: scoreLabel.position.y - lifeLabel.frame.height - 10)
         lifeLabel.name = kLifeLabelName
         lifeLabel.fontName = kRetroFontName
+        lifeLabel.fontSize = 20
         self.addChild(lifeLabel)
         
         let asteroidLabel = SKLabelNode(text: String(format: "Asteroids Left:", self.score))
@@ -339,6 +411,13 @@ extension GameScene {
         asteroidNumberLabel.position = CGPoint(x: asteroidLabel.frame.midX, y: asteroidLabel.frame.minY-asteroidNumberLabel.frame.height-10)
         self.addChild(asteroidNumberLabel)
     }
+    
+    func removeHUD() {
+        self.childNode(withName: kScoreLabelName)
+        self.childNode(withName: kLifeLabelName)
+        self.childNode(withName: kAsteroidLeftTitleName)
+        self.childNode(withName: kAsteroidLeftNumberName)
+    }
 
     
     func updateScore(addedScore: Int) {
@@ -351,9 +430,9 @@ extension GameScene {
 
     }
     
-    func updateLife() {
+    func updateLife(offset: Int) {
         
-        self.life -= 1
+        self.life += offset
         
         if let lifeLabel = childNode(withName: kLifeLabelName) as? SKLabelNode {
             lifeLabel.text = String(format: life.lifeString, self.score)
@@ -382,9 +461,11 @@ extension GameScene {
         if life <= 0 {
             isGameOver = true
             showPopUp()
+            removeHUD()
         } else if childNode(withName: kAsteroidName) == nil {
             wave += 1
             startWave(wave: wave)
+            spawnRandomItem()
         }
         
     }
@@ -400,6 +481,7 @@ extension GameScene {
             spawnRandomAsteroid(asteroidSpeed: kDefaultMoveDuration*speedConstant)
         }
         updateAsteroidLeft()
+        
     }
     
     func showToastBehind(message: String) {

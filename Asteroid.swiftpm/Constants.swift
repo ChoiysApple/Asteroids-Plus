@@ -31,6 +31,10 @@ let kAsteroidSpeedConstant: CFTimeInterval = 0.9
 let kBulletName: String = "bullet"
 let kBulletRadius: CGFloat = 2.5
 
+// Item
+let kLifeItemName: String = "LifeItem"
+let kGunItemName: String = "GunItem"
+
 // HUD
 let kHUDMargin: CGFloat = 50.0
 
