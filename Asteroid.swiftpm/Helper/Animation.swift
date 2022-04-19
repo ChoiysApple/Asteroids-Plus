@@ -1,5 +1,5 @@
 //
-//  File.swift
+//  Animation.swift
 //  Asteroid
 //
 //  Created by Daegeon Choi on 2022/04/12.

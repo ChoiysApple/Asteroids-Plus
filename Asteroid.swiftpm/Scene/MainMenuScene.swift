@@ -1,6 +1,6 @@
 //
-//  File.swift
-//  Asteroid +
+//  MainMenuScene.swift
+//  Asteroid+
 //
 //  Created by Daegeon Choi on 2022/04/13.
 //
