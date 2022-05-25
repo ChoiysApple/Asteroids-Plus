@@ -1,4 +1,5 @@
 # Asteroids+
+ WWDC22 Student Challenge Accepted 🎉
 Endless Asteroids in Swift Playground App
 
 Asteroids, Ship, Bullet, Explosion are all **Vector Image**
