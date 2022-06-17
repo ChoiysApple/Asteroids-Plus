@@ -73,6 +73,22 @@ Wen player destroys all asteroids, next wave with **more and faster asteroids** 
 
 </br>
 
+## Installation
+
+### 1. Using iPad Swift Playgrounds
+1. **Download** `Asteroid.swiftpm`. If you are not downloded from iPad, **put this file into iPad**
+2. Download Swift Playground from App Store and open.
+3. Tap "Location" (It's on Top left of playground app)
+4. Navigate and Select `Asteroid.swiftpm`
+5. Tap **"Asteroid"** from main screen (aka my playgrounds)
+6. Tap `▶︎` 
+
+### 2. Using Xcode
+1. **Download** `Asteroid.swiftpm`
+2. Run project using `iPad` Device or Simulator 
+
+</br>
+
 ## Coordinates for Sprite
 - [Asteroids](https://github.com/ChoiysApple/Asteroids-Plus/blob/1838daa20c68676b00bd9d148dcf7ff7588ab4cd/Asteroid.swiftpm/Data/AsteroidType.swift#L13) - 3 types of shapes
 - [Ship](https://github.com/ChoiysApple/Asteroids-Plus/blob/1838daa20c68676b00bd9d148dcf7ff7588ab4cd/Asteroid.swiftpm/Data/Shapes.swift#L16)
