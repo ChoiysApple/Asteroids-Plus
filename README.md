@@ -97,6 +97,10 @@ This app is developed for `iPad`
 - Item Sprite: SF Symbols
 - Sound Effect: Free Arcade Sound Effects from [mixkit](https://mixkit.co/free-sound-effects/arcade/)
 
+</br>
+
+</br>
+
 
 # And...
 If you get higher score, leave PR
