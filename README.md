@@ -74,6 +74,7 @@ Wen player destroys all asteroids, next wave with **more and faster asteroids** 
 </br>
 
 ## Installation
+Download playground app from [here](https://github.com/ChoiysApple/Asteroids-Plus/releases/tag/Release)
 
 ### 1. Using iPad Swift Playgrounds
 1. **Download** `Asteroid.swiftpm`. If you are not downloded from iPad, **put this file into iPad**
