@@ -3,10 +3,7 @@
 # Asteroids+
 > ** WWDC22 Student Challenge Accepted 🎉**
 
-Endless Asteroids in Swift Playground App
-
-Asteroids, Ship, Bullet, Explosion are all **Vector Image**
-
+Endless Asteroids in Swift Playground App [Gameplay Demo](https://youtu.be/OffJ0KTX0mI)  
 
 <img src="https://user-images.githubusercontent.com/43776784/174206305-e52d9933-b80c-4c70-92d5-b7a03f4f909c.gif" width=45%> <img src="https://user-images.githubusercontent.com/43776784/174208219-ca441c05-c3db-437e-86a8-a2d00ea1cae0.gif" width=45%>
 
@@ -91,6 +88,9 @@ Download playground app from [here](https://github.com/ChoiysApple/Asteroids-Plu
 </br>
 
 ## Coordinates for Sprite
+
+Asteroids, Ship, Bullet, Explosion are all **Vector Image**
+
 - [Asteroids](https://github.com/ChoiysApple/Asteroids-Plus/blob/1838daa20c68676b00bd9d148dcf7ff7588ab4cd/Asteroid.swiftpm/Data/AsteroidType.swift#L13) - 3 types of shapes
 - [Ship](https://github.com/ChoiysApple/Asteroids-Plus/blob/1838daa20c68676b00bd9d148dcf7ff7588ab4cd/Asteroid.swiftpm/Data/Shapes.swift#L16)
 - [Explosion](https://github.com/ChoiysApple/Asteroids-Plus/blob/1838daa20c68676b00bd9d148dcf7ff7588ab4cd/Asteroid.swiftpm/Helper/Animation.swift#L48) Animation destination coordinates
