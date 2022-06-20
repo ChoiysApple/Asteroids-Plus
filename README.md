@@ -7,6 +7,7 @@ Endless Asteroids in Swift Playground App [Gameplay Demo](https://youtu.be/OffJ0
 
 <img src="https://user-images.githubusercontent.com/43776784/174206305-e52d9933-b80c-4c70-92d5-b7a03f4f909c.gif" width=45%> <img src="https://user-images.githubusercontent.com/43776784/174208219-ca441c05-c3db-437e-86a8-a2d00ea1cae0.gif" width=45%>
 
+</br>
 
 ## Feature
 ### 1. Asteroids
