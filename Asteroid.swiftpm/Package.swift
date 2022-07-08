@@ -18,7 +18,7 @@ let package = Package(
             targets: ["AppModule"],
             bundleIdentifier: "com.choiysapple.AsteroidPlus",
             teamIdentifier: "ZW6466CHF4",
-            displayVersion: "1.1",
+            displayVersion: "1.1.1",
             bundleVersion: "1",
             iconAssetName: "AppIcon",
             accentColorAssetName: "AccentColor",
