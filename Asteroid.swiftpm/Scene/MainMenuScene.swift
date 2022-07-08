@@ -53,7 +53,7 @@ extension MainMenuScene {
         
         let titleLabel = SKLabelNode()
         titleLabel.fontName = "Avenir"
-        titleLabel.text = "Asteroid+"
+        titleLabel.text = "Asteroids+"
         titleLabel.horizontalAlignmentMode = .left
         titleLabel.verticalAlignmentMode = .bottom
         titleLabel.fontSize = 100

@@ -12,20 +12,25 @@ class GameScene: SKScene {
     
     // System data
     var score: Int = 0
-    var life: Int = 3
+    var life: Int = 1
     var wave: Int = 1
     var isGameOver: Bool = false
+    var isGameOverPopupOn: Bool = false
     var speedConstant = 1/kAsteroidSpeedConstant
-    var timePerFire: CFTimeInterval = 1.0           // Fire Cooltime
     
     // Physics Contact
     var contactQueue = [SKPhysicsContact]()
     
     // Fire
+    var timePerFire: CFTimeInterval = 1.0           // Fire Cooltime
     var timeOfLastFire: CFTimeInterval = 0.0
     var systemTime: CFTimeInterval = 1.0
     var isLoaded: Bool = true
-        
+    
+    // Game over popup delay
+    var timeRestartDelay: CFTimeInterval = 1.0
+    var timeOfGameOver: CFTimeInterval = 0.0
+
     override func didMove(to view: SKView) {
         
         configure()
@@ -64,7 +69,10 @@ extension GameScene {
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         
-        if isGameOver {
+        print("\(systemTime) \(timeOfGameOver) \(timeRestartDelay)")
+        
+        if isGameOver && (systemTime - timeOfGameOver > timeRestartDelay){
+            print("\(systemTime) \(timeOfGameOver) \(timeRestartDelay)")
             let gameScene = GameScene(size: self.size)
             self.view?.presentScene(gameScene, transition: .fade(withDuration: 1.0))
         }
@@ -470,9 +478,14 @@ extension GameScene {
         
         if life <= 0 {
             isGameOver = true
-            showPopUp()
-            removeHUD()
-            self.childNode(withName: kShipName)?.removeFromParent()
+            
+            if !isGameOverPopupOn {
+                showPopUp()
+                removeHUD()
+                self.childNode(withName: kShipName)?.removeFromParent()
+                isGameOverPopupOn = true
+                timeOfGameOver = systemTime
+            }
             
         } else if childNode(withName: kAsteroidName) == nil {
             wave += 1

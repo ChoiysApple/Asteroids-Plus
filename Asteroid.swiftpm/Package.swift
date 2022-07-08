@@ -8,17 +8,17 @@ import PackageDescription
 import AppleProductTypes
 
 let package = Package(
-    name: "Asteroid+",
+    name: "Asteroids+",
     platforms: [
         .iOS("15.2")
     ],
     products: [
         .iOSApplication(
-            name: "Asteroid+",
+            name: "Asteroids+",
             targets: ["AppModule"],
             bundleIdentifier: "com.choiysapple.AsteroidPlus",
             teamIdentifier: "ZW6466CHF4",
-            displayVersion: "1.0",
+            displayVersion: "1.1",
             bundleVersion: "1",
             iconAssetName: "AppIcon",
             accentColorAssetName: "AccentColor",
@@ -37,13 +37,13 @@ let package = Package(
             name: "AppModule",
             path: ".",
             resources: [
-                .copy("./Sound/WaveStart.wav"),
-                .copy("./Sound/ShipHit.wav"),
-                .copy("./Sound/LifeUp.wav"),
-                .copy("./Sound/Fire.wav"),
-                .copy("./Sound/BulletUp.wav"),
-                .copy("./Sound/AsteroidHit.wav")
-                       ]
+                .copy("Sound/WaveStart.wav"),
+                .copy("Sound/ShipHit.wav"),
+                .copy("Sound/LifeUp.wav"),
+                .copy("Sound/Fire.wav"),
+                .copy("Sound/BulletUp.wav"),
+                .copy("Sound/AsteroidHit.wav")
+            ]
         )
     ]
 )
