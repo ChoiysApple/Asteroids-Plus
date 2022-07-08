@@ -12,7 +12,7 @@ class GameScene: SKScene {
     
     // System data
     var score: Int = 0
-    var life: Int = 1
+    var life: Int = 3
     var wave: Int = 1
     var isGameOver: Bool = false
     var isGameOverPopupOn: Bool = false
@@ -69,10 +69,8 @@ extension GameScene {
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         
-        print("\(systemTime) \(timeOfGameOver) \(timeRestartDelay)")
-        
         if isGameOver && (systemTime - timeOfGameOver > timeRestartDelay){
-            print("\(systemTime) \(timeOfGameOver) \(timeRestartDelay)")
+            
             let gameScene = GameScene(size: self.size)
             self.view?.presentScene(gameScene, transition: .fade(withDuration: 1.0))
         }
